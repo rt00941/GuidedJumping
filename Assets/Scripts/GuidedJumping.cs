@@ -10,12 +10,17 @@ public class GuidedJumping : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        MakeNodeList();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void MakeNodeList()
+    {
+        foreach (GameObject obj in Game)
     }
 }
