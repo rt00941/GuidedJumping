@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 117917098
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c7729f87effedca8b665e49218a47c50
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 939e20ecac0e95a3f7c5cfb3e57acb1d
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Oculus/VR/Materials/BasicHandMaterial.mat
+Dependencies:
+- D:/Documents/Masters/Thesis/GuidedJumping/OVRAssetBundles/OVRMasterBundle/asset_png0

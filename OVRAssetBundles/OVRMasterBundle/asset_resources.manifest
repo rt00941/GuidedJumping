@@ -1,0 +1,115 @@
+ManifestFileVersion: 0
+CRC: 3416918395
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 90a6b4231c8214fbcbff58ab3eac809b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 2ace6aaf01b55d28d70f5a430f5d42b0
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 70c2f484f132c044097f03d65cac3b24, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b3d881e962d099f4a8eb492ef7e9a8c0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ad074644ff568a14187a3690cfbd7534, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Oculus/VR/Resources/Unlit Transparent Color.shader
+- Assets/Resources/museum/textures/hotel.png
+- Assets/Resources/museum/textures/skyscraper.png
+- Assets/Resources/museum/textures/police-car.png
+- Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_normal_1024.tif
+- Assets/Resources/museum/textures/sign-b4.png
+- Assets/Resources/museum/textures/painting03.jpg
+- Assets/Resources/museum/textures/painting04.jpg
+- Assets/Oculus/Avatar/Resources/Materials/AvatarPBRV2Simple.shader
+- Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_PC_SingleComponent.shader
+- Assets/Resources/museum/textures/painting01.jpg
+- Assets/Resources/museum/textures/sign-a4.png
+- Assets/Resources/museum/textures/elephants.jpg
+- Assets/Resources/museum/textures/sign-b3.png
+- Assets/Resources/museum/textures/grass.jpg
+- Assets/Resources/museum/textures/tiles.tif
+- Assets/Resources/museum/textures/PUSHILIN_forest.png
+- Assets/Resources/OVRBuildConfig.asset
+- Assets/Oculus/VR/Resources/Cubemap Blit.shader
+- Assets/Resources/ONSPSettings.asset
+- Assets/Oculus/VR/Resources/Underlay Impostor.shader
+- Assets/Resources/museum/museum.blend
+- Assets/Resources/museum/textures/sign-a3.png
+- Assets/Resources/museum/textures/brick.jpg
+- Assets/Resources/museum/textures/sign-a1.png
+- Assets/Oculus/VR/Resources/Underlay Transparent Occluder.shader
+- Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_normal_256.png
+- Assets/Resources/museum/textures/picture-police.jpg
+- Assets/Resources/museum/textures/orthographic-top-shot.jpg
+- Assets/Resources/museum/textures/city2.jpg
+- Assets/Resources/museum/textures/housing2.jpg
+- Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_diffuse_roughness_2048.png
+- Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShaderSelfOccluding.shader
+- Assets/Resources/museum/textures/sign-b5.png
+- Assets/Resources/museum/textures/wood-map.jpg
+- Assets/Resources/museum/textures/Elephant_BaseColor.png
+- Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_Mobile_CombinedMesh.shader
+- Assets/Resources/museum/textures/painting05.jpg
+- Assets/Resources/museum/textures/plant-diffuse.png
+- Assets/Oculus/VR/Resources/OVRMRUnlitTransparent.shader
+- Assets/Resources/OVRPlatformToolSettings.asset
+- Assets/Resources/OvrAvatarSettings.asset
+- Assets/Resources/OculusPlatformSettings.asset
+- Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_diffuse_roughness_1024.png
+- Assets/Resources/museum/textures/PUSHILIN_police_car.png
+- Assets/Resources/museum/textures/checker-tiles.tif
+- Assets/Resources/museum/textures/city1.jpg
+- Assets/Resources/museum/textures/wallpaper.jpg
+- Assets/Resources/museum/textures/sign-a5.png
+- Assets/Oculus/Avatar/Resources/Materials/Expressive/Avatar_PC_SingleComponentExpressive.shader
+- Assets/Oculus/Avatar/Resources/Materials/Expressive/AvatarEyeLens.shader
+- Assets/Oculus/VR/Resources/OVRMRUnlit.shader
+- Assets/Resources/museum/textures/sign-b1.png
+- Assets/Resources/museum/textures/arrows.jpg
+- Assets/Oculus/VR/Resources/OVRMRCameraFrame.shader
+- Assets/Resources/museum/textures/earth.jpg
+- Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShaderPBS.shader
+- Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_Mobile_SingleComponent.shader
+- Assets/Oculus/VR/Resources/OVRMRCameraFrameLit.shader
+- Assets/Resources/museum/textures/sign-b2.png
+- Assets/Resources/museum/textures/nature2.jpg
+- Assets/Oculus/Avatar/Resources/Materials/Expressive/Avatar_Mobile_CombinedMeshExpressive.shader
+- Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_normal_2048.png
+- Assets/Resources/museum/textures/picture-oldtimer.jpg
+- Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShaderPBSV2.shader
+- Assets/Resources/museum/textures/painting02.jpg
+- Assets/Resources/museum/textures/PUSHILIN_house.png
+- Assets/Resources/museum/museum.obj
+- Assets/Oculus/Avatar/Resources/FallbackTextures/fallback_diffuse_roughness_256.png
+- Assets/Resources/museum/textures/elephants2.jpg
+- Assets/Resources/museum/textures/nature1.jpg
+- Assets/Oculus/Avatar/Resources/Materials/Version1.5/Avatar_Mobile_Loader.shader
+- Assets/Resources/museum/textures/housing1.jpg
+- Assets/Resources/museum/textures/sign-a2.png
+- Assets/Oculus/VR/Resources/Texture2D Blit.shader
+- Assets/Oculus/Avatar/Resources/Materials/Expressive/Avatar_Mobile_SingleComponentExpressive.shader
+- Assets/Oculus/Avatar/Resources/Materials/AvatarSurfaceShader.shader
+Dependencies: []
