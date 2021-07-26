@@ -1,5 +1,5 @@
 
 *.log
-Library
-Logs
-Temp
+Library/
+Logs/
+Temp/
