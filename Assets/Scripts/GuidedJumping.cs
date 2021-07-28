@@ -6,6 +6,7 @@ using UnityEngine;
 public class GuidedJumping : MonoBehaviour
 {
     private GameObject[] nodes;
+    private GameObject currentNode;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,10 +22,12 @@ public class GuidedJumping : MonoBehaviour
 
     IEnumerator jumping()
     {
-        for (int i = 0; i < nodes.Length - 1; i++)
+        for (int i = 0; i < nodes.Length; i++)
         {
             yield return new WaitForSeconds(2);
-            gameObject.transform.SetParent(((GameObject)nodes.GetValue(i)).transform);
+            currentNode = (GameObject)nodes.GetValue(i);
+            Debug.Log(currentNode.GetComponent<NodeProperties>().waypoints);
+            gameObject.transform.SetParent(currentNode.transform);
             gameObject.transform.localPosition = new Vector3(0, 0, 0);
             /*List<Vector3> waypoints = CalculateWaypoints(((GameObject)nodes.GetValue(i)), ((GameObject)nodes.GetValue(i + 1)));
             Debug.Log("WAYPOINTS " + waypoints.Count);
@@ -37,7 +40,7 @@ public class GuidedJumping : MonoBehaviour
         }
     }
 
-    private List<Vector3> CalculateWaypoints(GameObject startnode, GameObject endnode)
+    /*private List<Vector3> CalculateWaypoints(GameObject startnode, GameObject endnode)
     {
         List<Vector3> waypoints = new List<Vector3>();
 
@@ -79,7 +82,7 @@ public class GuidedJumping : MonoBehaviour
         waypoints.Add(new Vector3(startx, starty, startz));
 
         return waypoints;
-    }
+    }*/
 
     private object WaitForSeconds(int v)
     {
