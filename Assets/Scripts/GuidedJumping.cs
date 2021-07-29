@@ -7,6 +7,7 @@ public class GuidedJumping : MonoBehaviour
 {
     private GameObject[] nodes;
     private GameObject currentNode;
+    private Transform currentWaypoints;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,17 +27,15 @@ public class GuidedJumping : MonoBehaviour
         {
             yield return new WaitForSeconds(2);
             currentNode = (GameObject)nodes.GetValue(i);
-            Debug.Log(currentNode.GetComponent<NodeProperties>().waypoints);
+            currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             gameObject.transform.SetParent(currentNode.transform);
             gameObject.transform.localPosition = new Vector3(0, 0, 0);
-            /*List<Vector3> waypoints = CalculateWaypoints(((GameObject)nodes.GetValue(i)), ((GameObject)nodes.GetValue(i + 1)));
-            Debug.Log("WAYPOINTS " + waypoints.Count);
-            for (int j = 0; j < waypoints.Count; j++)
-            {
-                
+            for (int j = 0; j < currentWaypoints.childCount; j++)
+            {                
                 yield return new WaitForSeconds(1);
-                gameObject.transform.position = waypoints[j];
-            }*/
+                Debug.Log(currentWaypoints.GetChild(j).transform.position);
+                gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
+            }
         }
     }
 

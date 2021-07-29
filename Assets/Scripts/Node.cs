@@ -11,3 +11,8 @@ public struct NodeProperties
     public int optionNumber;
     public GameObject waypoints;
 }
+
+public class Node : MonoBehaviour
+{
+    public NodeProperties thisnode;
+}
