@@ -15,6 +15,7 @@ public struct Gesture
 public class GestureManager : MonoBehaviour
 {
     public OVRSkeleton skeleton;
+    public bool debugMode = true;
     public List<Gesture> gestures;
     private List<OVRBone> fingerBones;
 
@@ -27,7 +28,10 @@ public class GestureManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (debugMode && Input.GetKeyDown(KeyCode.Space))
+        {
+            Save();
+        }
     }
 
     void Save()
@@ -40,5 +44,8 @@ public class GestureManager : MonoBehaviour
         {
             data.Add(skeleton.transform.InverseTransformPoint(bone.Transform.position));
         }
+        g.fingersData = data;
+        gestures.Add(g);
     }
+
 }
