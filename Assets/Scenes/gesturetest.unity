@@ -608,5 +608,15 @@ PrefabInstance:
       propertyPath: skeleton
       value: 
       objectReference: {fileID: 427251036}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
+      propertyPath: debugMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
+      propertyPath: gestures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba72c507c8ed40d4798dfdbbab8319c3, type: 3}
