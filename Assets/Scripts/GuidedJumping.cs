@@ -7,11 +7,14 @@ public class GuidedJumping : MonoBehaviour
 {
     private GameObject[] nodes;
     private GameObject currentNode;
-    private Transform currentWaypoints;
+    private Transform currentWaypoints; 
+    private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
+
     // Start is called before the first frame update
     void Start()
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
+        orderNodes();
         StartCoroutine(jumping());
     }
 
@@ -23,66 +26,38 @@ public class GuidedJumping : MonoBehaviour
 
     IEnumerator jumping()
     {
-        for (int i = 0; i < nodes.Length; i++)
+        for (int i = 0; i < ordered.Count; i++)
         {
-            yield return new WaitForSeconds(2);
-            currentNode = (GameObject)nodes.GetValue(i);
+            currentNode = ordered[i][0];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
-            gameObject.transform.SetParent(currentNode.transform);
-            gameObject.transform.localPosition = new Vector3(0, 0, 0);
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {                
-                yield return new WaitForSeconds(1);
-                Debug.Log(currentWaypoints.GetChild(j).transform.position);
+                yield return new WaitForSeconds(2);
                 gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
             }
+            yield return new WaitForSeconds(2);
+            gameObject.transform.position = currentNode.transform.position;
         }
     }
 
-    /*private List<Vector3> CalculateWaypoints(GameObject startnode, GameObject endnode)
+    private void orderNodes()
     {
-        List<Vector3> waypoints = new List<Vector3>();
-
-        float startx = startnode.transform.position.x;
-        float starty = startnode.transform.position.y;
-        float startz = startnode.transform.position.z;
-
-        float xdiff = endnode.transform.position.x - startnode.transform.position.x;
-        float ydiff = endnode.transform.position.y - startnode.transform.position.y;
-        float zdiff = endnode.transform.position.z - startnode.transform.position.z;
-
-        float xincrement = 1.0f;
-        float yincrement = 1.0f;
-        float zincrement = 1.0f;
-
-        
-        while (transform.position.x <= endnode.transform.position.x)
+        for (int i = 0; i < nodes.Length; i++)
         {
-            startx += xincrement;
-            waypoints.Add(new Vector3(startx, starty, startz));
+            NodeProperties n = nodes[i].GetComponent<Node>().thisnode;
+            if (ordered.ContainsKey(n.index))
+            {
+                ordered[n.index].Add(n.optionNumber, nodes[i]);
+            }
+            else
+            {
+                ordered.Add(n.index, new Dictionary<int, GameObject>());
+                ordered[n.index].Add(n.optionNumber, nodes[i]);
+            }
         }
-        startx = endnode.transform.position.x;
-        waypoints.Add(new Vector3(startx, starty, startz));
-        
-        while (transform.position.y <= endnode.transform.position.y)
-        {
-            starty += yincrement;
-            waypoints.Add(new Vector3(startx, starty, startz));
-        }
-        starty = endnode.transform.position.y;
-        waypoints.Add(new Vector3(startx, starty, startz));
-
-        while (transform.position.z <= endnode.transform.position.z)
-        {
-            startz += zincrement;
-            waypoints.Add(new Vector3(startx, starty, startz));
-        }
-        startz = endnode.transform.position.z;
-        waypoints.Add(new Vector3(startx, starty, startz));
-
-        return waypoints;
-    }*/
-
+        Debug.Log(ordered[1][0]);
+    }
+    
     private object WaitForSeconds(int v)
     {
         throw new NotImplementedException();
