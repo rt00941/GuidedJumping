@@ -9,11 +9,13 @@ public class GuidedJumping : MonoBehaviour
     private GameObject currentNode;
     private Transform currentWaypoints; 
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
+    private int chosenNode;
 
     // Start is called before the first frame update
     void Start()
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
+        chosenNode = 0;
         orderNodes();
         StartCoroutine(jumping());
     }
@@ -28,7 +30,7 @@ public class GuidedJumping : MonoBehaviour
     {
         for (int i = 0; i < ordered.Count; i++)
         {
-            currentNode = ordered[i][0];
+            currentNode = ordered[i][chosenNode];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {                
@@ -61,6 +63,7 @@ public class GuidedJumping : MonoBehaviour
     public void Choice(int index)
     {
         Debug.Log(index);
+        chosenNode = index;
     }
 
     private object WaitForSeconds(int v)
