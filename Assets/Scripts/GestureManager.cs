@@ -32,6 +32,10 @@ public class GestureManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (fingerBones.Count == 0)
+        {
+            fingerBones = new List<OVRBone>(skeleton.Bones);
+        }
         if (debugMode && Input.GetKeyDown(KeyCode.Space))
         {
             Save();
@@ -43,7 +47,7 @@ public class GestureManager : MonoBehaviour
         if (hasRecognized && !currentGesture.Equals(previousGesture))
         {
             // it is a new gesture
-            Debug.Log("New Gesture found: " + currentGesture.gestureName);
+            //Debug.Log("New Gesture found: " + currentGesture.gestureName);
             previousGesture = currentGesture;
             currentGesture.onRecognized.Invoke();
         }

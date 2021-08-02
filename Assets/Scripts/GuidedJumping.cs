@@ -58,6 +58,11 @@ public class GuidedJumping : MonoBehaviour
         Debug.Log(ordered[1][0]);
     }
     
+    public void Choice(int index)
+    {
+        Debug.Log(index);
+    }
+
     private object WaitForSeconds(int v)
     {
         throw new NotImplementedException();
