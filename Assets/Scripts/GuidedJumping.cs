@@ -19,6 +19,9 @@ public class GuidedJumping : MonoBehaviour
         chosenNode = 0;
         ghostAvatar = GameObject.Find("GhostAvatar");
         orderNodes();
+        currentNode = ordered[0][chosenNode];
+        gameObject.transform.position = currentNode.transform.position;
+        gameObject.transform.rotation = currentNode.transform.rotation;
         StartCoroutine(jumping());
     }
 
@@ -32,12 +35,18 @@ public class GuidedJumping : MonoBehaviour
     {
         for (int i = 0; i < ordered.Count; i++)
         {
+            if (ordered[i].Count > 1)
+            {
+                Debug.Log("THERE IS A CHOICE HERE!!");
+                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.A));
+            }
             currentNode = ordered[i][chosenNode];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {
                 ghostAvatar.transform.parent = currentWaypoints.GetChild(j).transform;
                 ghostAvatar.transform.localPosition = new Vector3(0, -0.7f, 0);
+                ghostAvatar.transform.localEulerAngles = new Vector3(0, 0, 0);
                 ghostAvatar.GetComponent<MeshRenderer>().enabled = true;
                 yield return new WaitForSeconds(2);
                 ghostAvatar.GetComponent<MeshRenderer>().enabled = false;
@@ -46,6 +55,7 @@ public class GuidedJumping : MonoBehaviour
             }
             ghostAvatar.transform.parent = currentNode.transform;
             ghostAvatar.transform.localPosition = new Vector3(0, -0.7f, 0);
+            ghostAvatar.transform.localEulerAngles = new Vector3(0, 0, 0);
             ghostAvatar.GetComponent<MeshRenderer>().enabled = true;
             yield return new WaitForSeconds(2);
             ghostAvatar.GetComponent<MeshRenderer>().enabled = false;
