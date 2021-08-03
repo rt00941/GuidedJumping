@@ -909,10 +909,12 @@ m_PackageAssets:
         - 1.9.1
         - 1.10.0-preview.1
         - 1.10.0-preview.2
+        - 1.10.0
         compatible:
         - 1.9.1
         - 1.10.0-preview.1
         - 1.10.0-preview.2
+        - 1.10.0
         verified: 1.9.1
       dependencies:
       - name: com.unity.xr.management
@@ -2779,6 +2781,7 @@ m_PackageAssets:
         - 4.0.6
         - 4.0.7
         - 4.1.0-pre.1
+        - 4.1.0-pre.2
         compatible:
         - 4.0.1
         - 4.0.3
@@ -2786,6 +2789,7 @@ m_PackageAssets:
         - 4.0.6
         - 4.0.7
         - 4.1.0-pre.1
+        - 4.1.0-pre.2
         verified: 4.0.7
       dependencies:
       - name: com.unity.modules.subsystems
@@ -3023,9 +3027,11 @@ m_PackageAssets:
         - 2.1.4
         - 2.1.6
         - 2.1.7
+        - 2.1.8
         compatible:
         - 2.1.7
-        verified: 2.1.7
+        - 2.1.8
+        verified: 2.1.8
       dependencies:
       - name: com.unity.modules.vr
         version: 1.0.0

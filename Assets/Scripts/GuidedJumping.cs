@@ -8,7 +8,8 @@ public class GuidedJumping : MonoBehaviour
     private GameObject[] nodes;
     private GameObject currentNode;
     private GameObject ghostAvatar;
-    private Transform currentWaypoints; 
+    private Transform currentWaypoints;
+    public bool paused;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
     private int chosenNode;
 
@@ -17,6 +18,7 @@ public class GuidedJumping : MonoBehaviour
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
         chosenNode = 0;
+        paused = false;
         ghostAvatar = GameObject.Find("GhostAvatar");
         orderNodes();
         currentNode = ordered[0][chosenNode];
@@ -38,8 +40,12 @@ public class GuidedJumping : MonoBehaviour
             if (ordered[i].Count > 1)
             {
                 Debug.Log("THERE IS A CHOICE HERE!!");
-                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.A));
+                paused = false;
+                yield return new WaitUntil(() => paused);
+                //yield return new WaitUntil(() => Choice());
             }
+            paused = false;
+            yield return new WaitUntil(() => paused);
             currentNode = ordered[i][chosenNode];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             for (int j = 0; j < currentWaypoints.childCount; j++)
@@ -84,8 +90,13 @@ public class GuidedJumping : MonoBehaviour
     
     public void Choice(int index)
     {
-        Debug.Log(index);
         chosenNode = index;
+        paused = true;
+    }
+
+    public void Stop()
+    {
+        paused = true;
     }
 
     private object WaitForSeconds(int v)
