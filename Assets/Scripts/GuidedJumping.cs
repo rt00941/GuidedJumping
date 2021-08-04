@@ -12,6 +12,7 @@ public class GuidedJumping : MonoBehaviour
     public bool paused;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
     private int chosenNode;
+    private int waitTime;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +20,7 @@ public class GuidedJumping : MonoBehaviour
         nodes = GameObject.FindGameObjectsWithTag("Node");
         chosenNode = 0;
         paused = false;
+        waitTime = 2;
         ghostAvatar = GameObject.Find("GhostAvatar");
         orderNodes();
         currentNode = ordered[0][chosenNode];
@@ -40,12 +42,11 @@ public class GuidedJumping : MonoBehaviour
             if (ordered[i].Count > 1)
             {
                 Debug.Log("THERE IS A CHOICE HERE!!");
-                paused = false;
-                yield return new WaitUntil(() => paused);
+                paused = true;
+                yield return new WaitUntil(() => !paused);
                 //yield return new WaitUntil(() => Choice());
             }
             paused = false;
-            yield return new WaitUntil(() => paused);
             currentNode = ordered[i][chosenNode];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             for (int j = 0; j < currentWaypoints.childCount; j++)
@@ -54,7 +55,17 @@ public class GuidedJumping : MonoBehaviour
                 ghostAvatar.transform.localPosition = new Vector3(0, -0.7f, 0);
                 ghostAvatar.transform.localEulerAngles = new Vector3(0, 0, 0);
                 ghostAvatar.GetComponent<MeshRenderer>().enabled = true;
-                yield return new WaitForSeconds(2);
+                while (!paused) 
+                {
+                    yield return new WaitForSeconds(waitTime);
+                    yield return new WaitUntil(() => !paused); 
+                    if (!paused)
+                    {
+                        yield return new WaitForSeconds(waitTime);
+                        paused = true;
+                    }
+                }
+                paused = false;
                 ghostAvatar.GetComponent<MeshRenderer>().enabled = false;
                 gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
                 gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation;
@@ -63,7 +74,17 @@ public class GuidedJumping : MonoBehaviour
             ghostAvatar.transform.localPosition = new Vector3(0, -0.7f, 0);
             ghostAvatar.transform.localEulerAngles = new Vector3(0, 0, 0);
             ghostAvatar.GetComponent<MeshRenderer>().enabled = true;
-            yield return new WaitForSeconds(2);
+            while (!paused)
+            {
+                yield return new WaitForSeconds(waitTime);
+                yield return new WaitUntil(() => !paused);
+                if (!paused)
+                {
+                    yield return new WaitForSeconds(waitTime);
+                    paused = true;
+                }
+            }
+            paused = false;
             ghostAvatar.GetComponent<MeshRenderer>().enabled = false;
             gameObject.transform.position = currentNode.transform.position;
             gameObject.transform.rotation = currentNode.transform.rotation;
@@ -85,18 +106,22 @@ public class GuidedJumping : MonoBehaviour
                 ordered[n.index].Add(n.optionNumber, nodes[i]);
             }
         }
-        Debug.Log(ordered[1][0]);
     }
     
     public void Choice(int index)
     {
         chosenNode = index;
-        paused = true;
+        paused = false;
     }
 
     public void Stop()
     {
         paused = true;
+    }
+
+    public void Restart()
+    {
+        paused = false;
     }
 
     private object WaitForSeconds(int v)
