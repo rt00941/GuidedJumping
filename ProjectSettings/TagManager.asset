@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Node
   - Waypoints
+  - GhostAvatar
   layers:
   - Default
   - TransparentFX
