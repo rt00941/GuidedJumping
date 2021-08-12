@@ -50,18 +50,16 @@ public class GuidedJumping : MonoBehaviour
                 paused = true;
                 foreach (KeyValuePair<int,GameObject> node in ordered[i])
                 {
-                    Debug.Log(node.Key);
                     currentWaypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
                     ghostAvatars[node.Key].transform.parent = currentWaypoints.GetChild(0).transform;
                     ghostAvatars[node.Key].transform.localPosition = new Vector3(0, -0.7f, 0);
                     ghostAvatars[node.Key].transform.localEulerAngles = new Vector3(0, 0, 0);
                     ghostAvatars[node.Key].GetComponent<MeshRenderer>().enabled = true;
-                    //avatar.GetComponent<MeshRenderer>().enabled = false;
                 }
                 yield return new WaitUntil(() => !paused);
-                foreach (GameObject avatar in ghostAvatars)
+                foreach (KeyValuePair<int, GameObject> node in ordered[i])
                 {
-                    avatar.GetComponent<MeshRenderer>().enabled = false;
+                    ghostAvatars[node.Key].GetComponent<MeshRenderer>().enabled = false;
                 }
                 //yield return new WaitUntil(() => Choice());
             }
