@@ -25,13 +25,9 @@ public class GuidedJumping : MonoBehaviour
         paused = false;
         waitTime = 2;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
-        choiceMat = (Material)Resources.Load("Materials/HighlightedGhostAvatarMaterial.mat");
-        selectedMat = (Material)Resources.Load("Materials/GhostAvatarMaterial.mat");
-        foreach (GameObject avatar in ghostAvatars)
-        {
-            avatar.GetComponent<MeshRenderer>().enabled = false;
-            avatar.GetComponentInChildren<LineRenderer>().enabled = false;
-        }
+        choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
+        selectedMat = Resources.Load<Material>("Materials/GhostAvatarMaterial");
+        ResetPreview(selectedMat);
         orderNodes();
         currentNode = ordered[0][chosenNode];
         gameObject.transform.position = currentNode.transform.position;
@@ -56,41 +52,17 @@ public class GuidedJumping : MonoBehaviour
                 foreach (KeyValuePair<int,GameObject> node in ordered[i])
                 {
                     currentWaypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
-                    ghostAvatars[node.Key].transform.parent = currentWaypoints.GetChild(0).transform;
-                    ghostAvatars[node.Key].transform.localPosition = new Vector3(0, -0.7f, 0);
-                    ghostAvatars[node.Key].transform.localEulerAngles = new Vector3(0, 0, 0);
-                    ghostAvatars[node.Key].GetComponent<MeshRenderer>().enabled = true;
-                    ghostAvatars[node.Key].GetComponentInChildren<LineRenderer>().enabled = true;
-                    ghostAvatars[node.Key].transform.GetComponent<MeshRenderer>().materials[0]=choiceMat;
+                    SetPreview(node.Key,currentWaypoints.GetChild(0), choiceMat);
                 }
                 yield return new WaitUntil(() => !paused);
-                /*foreach (KeyValuePair<int, GameObject> node in ordered[i])
-                {
-                    ghostAvatars[node.Key].transform.GetComponent<MeshRenderer>().materials[0] = (Material)Resources.Load("Materials/GhostAvatarMaterial.mat");
-                    ghostAvatars[node.Key].GetComponent<MeshRenderer>().enabled = false; 
-                }*/
-                //yield return new WaitUntil(() => Choice());
             }
-            paused = false; 
-            foreach (GameObject avatar in ghostAvatars)
-            {
-                avatar.transform.GetComponent<MeshRenderer>().materials[0] = selectedMat;
-                avatar.GetComponent<MeshRenderer>().enabled = false;
-                avatar.GetComponentInChildren<LineRenderer>().enabled = false;
-            }
+            paused = false;
+            ResetPreview(selectedMat);
             currentNode = ordered[i][chosenNode];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {
-                ghostAvatars[0].transform.parent = currentWaypoints.GetChild(j).transform;
-                ghostAvatars[0].transform.localPosition = new Vector3(0, -0.7f, 0);
-                ghostAvatars[0].transform.localEulerAngles = new Vector3(0, 0, 0);
-                ghostAvatars[0].GetComponent<MeshRenderer>().enabled = true;
-                ghostAvatars[0].GetComponentInChildren<LineRenderer>().enabled = true;
-                Vector3 linepos = new Vector3(ghostAvatars[0].transform.position.x, transform.position.y, ghostAvatars[0].transform.position.z);
-                ghostAvatars[0].GetComponentInChildren<LineRenderer>().SetPosition(0, linepos);
-                ghostAvatars[0].GetComponentInChildren<LineRenderer>().SetPosition(1, transform.position);
-                ghostAvatars[0].transform.GetComponent<MeshRenderer>().materials[0] = selectedMat;
+                SetPreview(chosenNode, currentWaypoints.GetChild(j),selectedMat);
                 while (!paused) 
                 {
                     yield return new WaitForSeconds(waitTime);
@@ -102,17 +74,12 @@ public class GuidedJumping : MonoBehaviour
                     }
                 }
                 paused = false;
-                ghostAvatars[0].GetComponent<MeshRenderer>().enabled = false;
-                ghostAvatars[0].GetComponentInChildren<LineRenderer>().enabled = false;
+                ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
+                ghostAvatars[chosenNode].GetComponentInChildren<LineRenderer>().enabled = false;
                 gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
                 gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation;
             }
-            ghostAvatars[0].transform.parent = currentNode.transform;
-            ghostAvatars[0].transform.localPosition = new Vector3(0, -0.7f, 0);
-            ghostAvatars[0].transform.localEulerAngles = new Vector3(0, 0, 0);
-            ghostAvatars[0].GetComponent<MeshRenderer>().enabled = true;
-            ghostAvatars[0].GetComponentInChildren<LineRenderer>().enabled = true;
-            ghostAvatars[0].transform.GetComponent<MeshRenderer>().materials[0] = selectedMat;
+            SetPreview(chosenNode, currentNode.transform,selectedMat);
             while (!paused)
             {
                 yield return new WaitForSeconds(waitTime);
@@ -124,8 +91,8 @@ public class GuidedJumping : MonoBehaviour
                 }
             }
             paused = false;
-            ghostAvatars[0].GetComponent<MeshRenderer>().enabled = false;
-            ghostAvatars[0].GetComponentInChildren<LineRenderer>().enabled = false;
+            ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
+            ghostAvatars[chosenNode].GetComponentInChildren<LineRenderer>().enabled = false;
             gameObject.transform.position = currentNode.transform.position;
             gameObject.transform.rotation = currentNode.transform.rotation;
         }
@@ -147,7 +114,33 @@ public class GuidedJumping : MonoBehaviour
             }
         }
     }
-    
+
+    private void SetPreview(int index, Transform current, Material mat)
+    {
+        ghostAvatars[index].transform.parent = current;
+        ghostAvatars[index].transform.localPosition = new Vector3(0, -0.7f, 0);
+        ghostAvatars[index].transform.localEulerAngles = new Vector3(0, 0, 0);
+        ghostAvatars[index].GetComponent<MeshRenderer>().enabled = true;
+        Vector3 linepos = new Vector3(ghostAvatars[index].transform.position.x, transform.position.y, ghostAvatars[index].transform.position.z);
+        Vector3 linepos1 = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        ghostAvatars[index].GetComponentInChildren<LineRenderer>().SetPosition(0, linepos);
+        ghostAvatars[index].GetComponentInChildren<LineRenderer>().SetPosition(1, linepos1);
+        ghostAvatars[index].GetComponentInChildren<LineRenderer>().enabled = true;
+        ghostAvatars[index].GetComponent<MeshRenderer>().material = mat;
+        ghostAvatars[index].GetComponentInChildren<LineRenderer>().material = mat;
+    }
+
+    private void ResetPreview(Material mat)
+    {
+        foreach (GameObject avatar in ghostAvatars)
+        {
+            avatar.transform.GetComponent<MeshRenderer>().material = selectedMat;
+            avatar.GetComponentInChildren<LineRenderer>().material = selectedMat;
+            avatar.GetComponent<MeshRenderer>().enabled = false;
+            avatar.GetComponentInChildren<LineRenderer>().enabled = false;
+        }
+    }
+
     public void Choice(int index)
     {
         chosenNode = index;
