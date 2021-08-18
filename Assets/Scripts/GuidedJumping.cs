@@ -65,11 +65,21 @@ public class GuidedJumping : MonoBehaviour
                 SetPreview(chosenNode, currentWaypoints.GetChild(j),selectedMat);
                 while (!paused) 
                 {
-                    yield return new WaitForSeconds(waitTime);
+                    //yield return new WaitForSeconds(waitTime);
+                    for (int t = 0; t < waitTime; t++)
+                    {
+                        Debug.Log(waitTime - t + " Seconds left");
+                        yield return new WaitForSeconds(1);
+                    }
                     yield return new WaitUntil(() => !paused); 
                     if (!paused)
                     {
-                        yield return new WaitForSeconds(waitTime);
+                        //yield return new WaitForSeconds(waitTime);
+                        for (int t = 0; t < waitTime; t++)
+                        {
+                            Debug.Log(waitTime - t + " Seconds left");
+                            yield return new WaitForSeconds(1);
+                        }
                         paused = true;
                     }
                 }
@@ -82,11 +92,21 @@ public class GuidedJumping : MonoBehaviour
             SetPreview(chosenNode, currentNode.transform,selectedMat);
             while (!paused)
             {
-                yield return new WaitForSeconds(waitTime);
+                //yield return new WaitForSeconds(waitTime);
+                for (int t = 0; t < waitTime; t++)
+                {
+                    Debug.Log(waitTime - t + " Seconds left");
+                    yield return new WaitForSeconds(1);
+                }
                 yield return new WaitUntil(() => !paused);
                 if (!paused)
                 {
-                    yield return new WaitForSeconds(waitTime);
+                    //yield return new WaitForSeconds(waitTime);
+                    for (int t = 0; t < waitTime; t++)
+                    {
+                        Debug.Log(waitTime - t + " Seconds left");
+                        yield return new WaitForSeconds(1);
+                    }
                     paused = true;
                 }
             }
