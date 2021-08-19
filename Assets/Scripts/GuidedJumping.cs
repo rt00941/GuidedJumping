@@ -8,7 +8,7 @@ public class GuidedJumping : MonoBehaviour
     private GameObject[] nodes;
     private GameObject currentNode;
     private GameObject[] ghostAvatars;
-    public GameObject ghostAvatarPrefab;
+    public GameObject[] arrows;
     private Transform currentWaypoints;
     public bool paused;
     public bool reset;
@@ -27,6 +27,12 @@ public class GuidedJumping : MonoBehaviour
         reset = false;
         waitTime = 2;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
+        arrows = GameObject.FindGameObjectsWithTag("Arrow");
+        foreach (GameObject a in arrows)
+        {
+            a.SetActive(false);
+        }
+        Debug.Log(arrows.Length);
         choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
         selectedMat = Resources.Load<Material>("Materials/GhostAvatarMaterial");
         ResetPreview(selectedMat);
@@ -40,7 +46,18 @@ public class GuidedJumping : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        for (int i = 0; i < ordered.Count; i++)
+        {
+            foreach (KeyValuePair<int, GameObject> node in ordered[i])
+            {
+                if (arrows[node.Key].activeSelf)
+                {
+                    arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
+                    arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z); 
+                    arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
+                }
+            }
+        }
     }
 
     IEnumerator jumping()
@@ -55,8 +72,18 @@ public class GuidedJumping : MonoBehaviour
                 {
                     currentWaypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
                     SetPreview(node.Key,currentWaypoints.GetChild(0), choiceMat);
+                    arrows[node.Key].SetActive(true);
+                    arrows[node.Key].transform.localPosition = new Vector3(-0.2f * node.Key, -0.1f, 0);
+                    arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
+                    arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z);
+                    arrows[node.Key].GetComponentInChildren<TMPro.TextMeshPro>().text = node.Key.ToString() + " out of " + ordered[i].Count;
+                    arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
                 }
                 yield return new WaitUntil(() => !paused);
+                foreach (GameObject a in arrows)
+                {
+                    a.SetActive(false);
+                }
             }
             paused = false;
             ResetPreview(selectedMat);
