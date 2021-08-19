@@ -11,6 +11,7 @@ public class GuidedJumping : MonoBehaviour
     public GameObject ghostAvatarPrefab;
     private Transform currentWaypoints;
     public bool paused;
+    public bool reset;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
     private int chosenNode;
     private int waitTime;
@@ -23,6 +24,7 @@ public class GuidedJumping : MonoBehaviour
         nodes = GameObject.FindGameObjectsWithTag("Node");
         chosenNode = 0;
         paused = false;
+        reset = false;
         waitTime = 2;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
         choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
@@ -74,11 +76,15 @@ public class GuidedJumping : MonoBehaviour
                     yield return new WaitUntil(() => !paused); 
                     if (!paused)
                     {
-                        //yield return new WaitForSeconds(waitTime);
-                        for (int t = 0; t < waitTime; t++)
+                        if (reset)
                         {
-                            Debug.Log(waitTime - t + " Seconds left");
-                            yield return new WaitForSeconds(1);
+                            //yield return new WaitForSeconds(waitTime);
+                            for (int t = 0; t < waitTime; t++)
+                            {
+                                Debug.Log(waitTime - t + " Seconds left");
+                                yield return new WaitForSeconds(1);
+                            }
+                            reset = false;
                         }
                         paused = true;
                     }
@@ -101,12 +107,16 @@ public class GuidedJumping : MonoBehaviour
                 yield return new WaitUntil(() => !paused);
                 if (!paused)
                 {
-                    //yield return new WaitForSeconds(waitTime);
-                    for (int t = 0; t < waitTime; t++)
+                    if (reset)
                     {
-                        Debug.Log(waitTime - t + " Seconds left");
-                        yield return new WaitForSeconds(1);
-                    }
+                        //yield return new WaitForSeconds(waitTime);
+                        for (int t = 0; t < waitTime; t++)
+                        {
+                            Debug.Log(waitTime - t + " Seconds left");
+                            yield return new WaitForSeconds(1);
+                        }
+                        reset = false;
+                    }                    
                     paused = true;
                 }
             }
@@ -175,6 +185,7 @@ public class GuidedJumping : MonoBehaviour
     public void Restart()
     {
         paused = false;
+        reset = true;
     }
 
     private object WaitForSeconds(int v)
