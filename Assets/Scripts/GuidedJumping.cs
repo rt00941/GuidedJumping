@@ -25,7 +25,7 @@ public class GuidedJumping : MonoBehaviour
         chosenNode = 0;
         paused = false;
         reset = false;
-        waitTime = 2;
+        waitTime = 3;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
         arrows = GameObject.FindGameObjectsWithTag("Arrow");
         foreach (GameObject a in arrows)
@@ -84,6 +84,10 @@ public class GuidedJumping : MonoBehaviour
                 {
                     a.SetActive(false);
                 }
+                arrows[chosenNode].SetActive(true);
+                arrows[chosenNode].GetComponentInChildren<TMPro.TextMeshPro>().text = "Selected!";
+                yield return new WaitForSeconds(0.5f);
+                arrows[chosenNode].SetActive(false);
             }
             paused = false;
             ResetPreview(selectedMat);
@@ -95,10 +99,17 @@ public class GuidedJumping : MonoBehaviour
                 while (!paused) 
                 {
                     //yield return new WaitForSeconds(waitTime);
-                    for (int t = 0; t < waitTime; t++)
+                    for (int t = 0; t <= waitTime; t++)
                     {
-                        Debug.Log(waitTime - t + " Seconds left");
-                        yield return new WaitForSeconds(1);
+                        Countdown(t); 
+                        if (t != waitTime)
+                        {
+                            yield return new WaitForSeconds(1);
+                        }
+                        else
+                        {
+                            yield return new WaitForSeconds(0.1f);
+                        }
                     }
                     yield return new WaitUntil(() => !paused); 
                     if (!paused)
@@ -106,10 +117,17 @@ public class GuidedJumping : MonoBehaviour
                         if (reset)
                         {
                             //yield return new WaitForSeconds(waitTime);
-                            for (int t = 0; t < waitTime; t++)
+                            for (int t = 0; t <= waitTime; t++)
                             {
-                                Debug.Log(waitTime - t + " Seconds left");
-                                yield return new WaitForSeconds(1);
+                                Countdown(t); 
+                                if (t != waitTime)
+                                {
+                                    yield return new WaitForSeconds(1);
+                                }
+                                else
+                                {
+                                    yield return new WaitForSeconds(0.1f);
+                                }
                             }
                             reset = false;
                         }
@@ -126,10 +144,17 @@ public class GuidedJumping : MonoBehaviour
             while (!paused)
             {
                 //yield return new WaitForSeconds(waitTime);
-                for (int t = 0; t < waitTime; t++)
+                for (int t = 0; t <= waitTime; t++)
                 {
-                    Debug.Log(waitTime - t + " Seconds left");
-                    yield return new WaitForSeconds(1);
+                    Countdown(t); 
+                    if (t != waitTime)
+                    {
+                        yield return new WaitForSeconds(1);
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
                 }
                 yield return new WaitUntil(() => !paused);
                 if (!paused)
@@ -137,10 +162,17 @@ public class GuidedJumping : MonoBehaviour
                     if (reset)
                     {
                         //yield return new WaitForSeconds(waitTime);
-                        for (int t = 0; t < waitTime; t++)
+                        for (int t = 0; t <= waitTime; t++)
                         {
-                            Debug.Log(waitTime - t + " Seconds left");
-                            yield return new WaitForSeconds(1);
+                            Countdown(t);
+                            if (t != waitTime)
+                            {
+                                yield return new WaitForSeconds(1);
+                            }
+                            else
+                            {
+                                yield return new WaitForSeconds(0.1f);
+                            }
                         }
                         reset = false;
                     }                    
@@ -180,11 +212,18 @@ public class GuidedJumping : MonoBehaviour
         ghostAvatars[index].GetComponent<MeshRenderer>().enabled = true;
         Vector3 linepos = new Vector3(ghostAvatars[index].transform.position.x, transform.position.y, ghostAvatars[index].transform.position.z);
         Vector3 linepos1 = new Vector3(transform.position.x, 0.0f, transform.position.z);
-        ghostAvatars[index].GetComponentInChildren<LineRenderer>().SetPosition(0, linepos);
-        ghostAvatars[index].GetComponentInChildren<LineRenderer>().SetPosition(1, linepos1);
-        ghostAvatars[index].GetComponentInChildren<LineRenderer>().enabled = true;
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(0, linepos);
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(1, linepos1); 
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().startWidth = 0.1f;
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().endWidth = 0.1f;
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().enabled = true;
+        ghostAvatars[index].transform.GetChild(1).GetComponent<LineRenderer>().SetPosition(0, linepos);
+        ghostAvatars[index].transform.GetChild(1).GetComponent<LineRenderer>().SetPosition(1, linepos1);
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().startWidth = 0.01f;
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().endWidth = 0.01f;
+        ghostAvatars[index].transform.GetChild(1).GetComponent<LineRenderer>().enabled = true;
         ghostAvatars[index].GetComponent<MeshRenderer>().material = mat;
-        ghostAvatars[index].GetComponentInChildren<LineRenderer>().material = mat;
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().material = mat;
     }
 
     private void ResetPreview(Material mat)
@@ -213,6 +252,37 @@ public class GuidedJumping : MonoBehaviour
     {
         paused = false;
         reset = true;
+    }
+
+    public void Countdown(int t)
+    {
+        Debug.Log(waitTime - t + " Seconds left");
+        /*float dist = Vector3.Distance(ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(0), ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(1));
+        Debug.LogError(dist);
+        float posx = ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(0).x + ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(1).x;
+        float posy = ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(0).y + ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(1).y;
+        float posz = ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(0).z + ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().GetPosition(1).z;
+        posx = posx / (t + 1); 
+        posy = posy / (t + 1); 
+        posz = posz / (t + 1);
+        Vector3 pos = new Vector3(posx, posy, posz);
+        Debug.LogError(pos);
+        //Vector3 pos = new Vector3(transform.position.x / (t + 1), 0, transform.position.z / (t + 1));
+        //Vector3 pos = new Vector3(transform.position.x / (t + 1), 0, transform.position.z);
+        //Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z / (t + 1));
+        //Vector3 pos = new Vector3(transform.position.x, transform.position.y / (t + 1), transform.position.z / (t + 1));
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().SetPosition(1, pos);*/
+        float width = ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().startWidth;
+        if (t == waitTime)
+        {
+            width = 0;
+        }
+        else if (t != 0)
+        {
+            width = (width / (t + 1));
+        }
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().startWidth = width;
+        ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().endWidth = width;
     }
 
     private object WaitForSeconds(int v)
