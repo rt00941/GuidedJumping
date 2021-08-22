@@ -238,27 +238,33 @@ public class GuidedJumping : MonoBehaviour
         }
     }
 
-    public void Choice(Vector3 pointingPosition)
+    public void Choice(Transform pointingTransform)
     {
         Debug.Log("CHOICE GESTURE SELECTED");
         Debug.Log(pointingPosition);
         int index = 0;
-        float minDist = Mathf.Infinity;
-        float dist;
+        float angle = 10;
+        /*float minDist = Mathf.Infinity;
+        float dist;*/
         for (int i = 0; i < ghostAvatars.Length; i++)
         {
-            dist = Vector3.Distance(ghostAvatars[i].transform.position, pointingPosition);
+            /*dist = Vector3.Distance(ghostAvatars[i].transform.position, pointingPosition);
             if (dist < minDist)
             {
                 index = i;
                 minDist = dist;
+            }*/
+            if (Vector3.Angle(pointingTransform.forward, ghostAvatars[i].transform.position - pointingTransform.position) < angle)
+            {
+                index = i;
             }
         }
-        if (minDist < 1)
+        chosenNode = index;
+        Debug.Log("Node " + chosenNode + " selected!");
+        paused = false;
+        /*if (minDist < 1)
         {
-            chosenNode = index;
-            paused = false;
-        }
+        }*/
     }
 
     public void Stop()

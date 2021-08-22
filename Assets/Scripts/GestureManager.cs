@@ -75,7 +75,7 @@ public class GestureManager : MonoBehaviour
             if(bone.Id == OVRSkeleton.BoneId.Hand_IndexTip)
             {
                 Debug.Log(bone.Transform.position);
-                GameObject.Find("Platform").GetComponent<GuidedJumping>().Choice(bone.Transform.position);
+                GameObject.Find("Platform").GetComponent<GuidedJumping>().Choice(bone.Transform);
             }
         }
     }
