@@ -133,7 +133,8 @@ public class GuidedJumping : MonoBehaviour
                 }
                 paused = false;
                 ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
-                ghostAvatars[chosenNode].GetComponentInChildren<LineRenderer>().enabled = false;
+                ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
+                ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
                 gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
                 gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation;
             }
@@ -176,7 +177,8 @@ public class GuidedJumping : MonoBehaviour
             }
             paused = false;
             ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
-            ghostAvatars[chosenNode].GetComponentInChildren<LineRenderer>().enabled = false;
+            ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
+            ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
             gameObject.transform.position = currentNode.transform.position;
             gameObject.transform.rotation = currentNode.transform.rotation;
         }
@@ -228,7 +230,8 @@ public class GuidedJumping : MonoBehaviour
             avatar.transform.GetComponent<MeshRenderer>().material = selectedMat;
             avatar.GetComponentInChildren<LineRenderer>().material = selectedMat;
             avatar.GetComponent<MeshRenderer>().enabled = false;
-            avatar.GetComponentInChildren<LineRenderer>().enabled = false;
+            avatar.transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
+            avatar.transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
         }
     }
 
