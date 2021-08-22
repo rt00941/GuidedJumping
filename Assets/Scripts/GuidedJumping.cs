@@ -9,6 +9,7 @@ public class GuidedJumping : MonoBehaviour
     private GameObject currentNode;
     private GameObject[] ghostAvatars;
     public GameObject[] arrows;
+    private GameObject label;
     private Transform currentWaypoints;
     public bool paused;
     public bool reset;
@@ -32,6 +33,8 @@ public class GuidedJumping : MonoBehaviour
         {
             a.SetActive(false);
         }
+        label = GameObject.Find("Pause Label");
+        label.SetActive(false);
         choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
         selectedMat = Resources.Load<Material>("Materials/GhostAvatarMaterial");
         ResetPreview(selectedMat);
@@ -261,12 +264,14 @@ public class GuidedJumping : MonoBehaviour
     public void Stop()
     {
         Debug.Log("STOP GESTURE SELECTED");
+        label.SetActive(true);
         paused = true;
     }
 
     public void Restart()
     {
         Debug.Log("RESTART GESTURE SELECTED");
+        label.SetActive(false);
         paused = false;
         reset = true;
     }
