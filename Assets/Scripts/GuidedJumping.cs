@@ -237,17 +237,20 @@ public class GuidedJumping : MonoBehaviour
 
     public void Choice(int index)
     {
+        Debug.Log("CHOICE GESTURE SELECTED");
         chosenNode = index;
         paused = false;
     }
 
     public void Stop()
     {
+        Debug.Log("STOP GESTURE SELECTED");
         paused = true;
     }
 
     public void Restart()
     {
+        Debug.Log("RESTART GESTURE SELECTED");
         paused = false;
         reset = true;
     }

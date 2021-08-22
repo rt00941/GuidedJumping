@@ -47,7 +47,7 @@ public class GestureManager : MonoBehaviour
         if (hasRecognized && !currentGesture.Equals(previousGesture))
         {
             // it is a new gesture
-            //Debug.Log("New Gesture found: " + currentGesture.gestureName);
+            Debug.Log("New Gesture found: " + currentGesture.gestureName);
             previousGesture = currentGesture;
             currentGesture.onRecognized.Invoke();
         }
@@ -65,6 +65,18 @@ public class GestureManager : MonoBehaviour
         }
         g.fingersData = data;
         gestures.Add(g);
+    }
+
+    public void PointingAt()
+    {
+        Debug.Log("THIS GESTURE SELECTED");
+        foreach (var bone in fingerBones)
+        {
+            if(bone.Id == OVRSkeleton.BoneId.Hand_IndexTip)
+            {
+                Debug.Log(bone.Transform.position);
+            }
+        }
     }
 
     Gesture Recognize()
