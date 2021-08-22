@@ -1955,12 +1955,12 @@ PrefabInstance:
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
       propertyPath: gestures.Array.data[0].onRecognized.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
       propertyPath: gestures.Array.data[1].onRecognized.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
@@ -1970,7 +1970,7 @@ PrefabInstance:
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
       propertyPath: gestures.Array.data[3].onRecognized.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
@@ -1979,8 +1979,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
+      propertyPath: gestures.Array.data[0].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
       propertyPath: gestures.Array.data[1].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
@@ -2024,6 +2029,11 @@ PrefabInstance:
       objectReference: {fileID: 319851181650154723}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
+      propertyPath: gestures.Array.data[0].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
       propertyPath: gestures.Array.data[1].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
@@ -2044,8 +2054,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
+      propertyPath: gestures.Array.data[0].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Restart
+      objectReference: {fileID: 0}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
       propertyPath: gestures.Array.data[1].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Choice
+      value: Stop
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
@@ -2061,6 +2076,11 @@ PrefabInstance:
         type: 3}
       propertyPath: gestures.Array.data[4].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Stop
+      objectReference: {fileID: 0}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
+      propertyPath: gestures.Array.data[0].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GuidedJumping, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
@@ -2085,7 +2105,12 @@ PrefabInstance:
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}
       propertyPath: gestures.Array.data[1].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
+        type: 3}
+      propertyPath: gestures.Array.data[0].onRecognized.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8527565910643252699, guid: ba72c507c8ed40d4798dfdbbab8319c3,
         type: 3}

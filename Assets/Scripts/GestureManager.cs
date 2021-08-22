@@ -69,12 +69,13 @@ public class GestureManager : MonoBehaviour
 
     public void PointingAt()
     {
-        Debug.Log("THIS GESTURE SELECTED");
+        Debug.Log("POINTING GESTURE SELECTED");
         foreach (var bone in fingerBones)
         {
             if(bone.Id == OVRSkeleton.BoneId.Hand_IndexTip)
             {
                 Debug.Log(bone.Transform.position);
+                GameObject.Find("Platform").GetComponent<GuidedJumping>().Choice(bone.Transform.position);
             }
         }
     }
