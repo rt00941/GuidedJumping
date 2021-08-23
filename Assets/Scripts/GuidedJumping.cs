@@ -241,7 +241,7 @@ public class GuidedJumping : MonoBehaviour
     public void Choice(Transform pointingTransform)
     {
         Debug.Log("CHOICE GESTURE SELECTED");
-        Debug.Log(pointingPosition);
+        Debug.Log(pointingTransform);
         int index = 0;
         float angle = 10;
         /*float minDist = Mathf.Infinity;
