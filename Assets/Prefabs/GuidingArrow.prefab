@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5039632943338654316}
   - component: {fileID: 6343578191461330087}
-  - component: {fileID: 5589815045782414764}
   - component: {fileID: 5553194253442397742}
   m_Layer: 0
   m_Name: Text (TMP)
@@ -26,16 +25,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1379327826806930287}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 0.055555556, y: 0.20000002, z: 1}
+  m_LocalScale: {x: 0.029999996, y: 0.20000002, z: 1}
   m_Children: []
   m_Father: {fileID: 3243305138783414563}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.1, y: 0.4}
+  m_AnchoredPosition: {x: 0.18, y: 0.39999962}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.05, y: 1}
 --- !u!23 &6343578191461330087
@@ -79,14 +78,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &5589815045782414764
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1379327826806930287}
-  m_CullTransparentMesh: 0
 --- !u!114 &5553194253442397742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -288,7 +279,7 @@ Transform:
   m_GameObject: {fileID: 8212010506183247984}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.07, y: 1.77, z: 0.10000001}
-  m_LocalScale: {x: 1.8, y: 0.5, z: 0.10000001}
+  m_LocalScale: {x: 3, y: 0.5, z: 0.10000001}
   m_Children:
   - {fileID: 5039632943338654316}
   m_Father: {fileID: 8143846705754932169}

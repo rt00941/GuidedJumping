@@ -10,6 +10,9 @@ public class GuidedJumping : MonoBehaviour
     private GameObject[] ghostAvatars;
     public GameObject[] arrows;
     private GameObject label;
+    private GameObject eyes;
+    private GameObject lefthand;
+    private GameObject righthand;
     private Transform currentWaypoints;
     public bool paused;
     public bool reset;
@@ -35,6 +38,9 @@ public class GuidedJumping : MonoBehaviour
         }
         label = GameObject.Find("Pause Label");
         label.SetActive(false);
+        eyes = GameObject.Find("CenterEyeAnchor");
+        lefthand = GameObject.Find("LeftHandAnchor");
+        righthand = GameObject.Find("RighttHandAnchor");
         choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
         selectedMat = Resources.Load<Material>("Materials/GhostAvatarMaterial");
         ResetPreview(selectedMat);
@@ -61,6 +67,14 @@ public class GuidedJumping : MonoBehaviour
                 }
             }
         }
+        if (paused)
+        {
+            label.SetActive(true);
+        }
+        else
+        {
+            label.SetActive(false);
+        }
     }
 
     IEnumerator jumping()
@@ -76,10 +90,10 @@ public class GuidedJumping : MonoBehaviour
                     currentWaypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
                     SetPreview(node.Key,currentWaypoints.GetChild(0), choiceMat);
                     arrows[node.Key].SetActive(true);
-                    arrows[node.Key].transform.localPosition = new Vector3(-0.2f * node.Key, -0.1f, 0);
+                    arrows[node.Key].transform.localPosition = new Vector3(-0.3f * node.Key, -0.1f, 0);
                     arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
                     arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z);
-                    arrows[node.Key].GetComponentInChildren<TMPro.TextMeshPro>().text = node.Key.ToString() + " out of " + ordered[i].Count;
+                    arrows[node.Key].GetComponentInChildren<TMPro.TextMeshPro>().text = node.Value.GetComponent<Node>().thisnode.description;
                     arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
                 }
                 yield return new WaitUntil(() => !paused);
@@ -290,7 +304,13 @@ public class GuidedJumping : MonoBehaviour
 
     void CheckFocus()
     {
-
+        float angle = 10;
+//        Debug.Log(Vector3.Angle(ghostAvatars[chosenNode].transform.forward, eyes.transform.position - ghostAvatars[chosenNode].transform.position));
+        Debug.Log(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position));
+        if (Vector3.Angle(ghostAvatars[chosenNode].transform.forward, eyes.transform.position - ghostAvatars[chosenNode].transform.position) < angle)
+        {
+            Debug.Log("Not In Focus");
+        }
     }
 
     private object WaitForSeconds(int v)

@@ -2243,6 +2243,11 @@ PrefabInstance:
       propertyPath: thisnode.index
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 1501091959117930245, guid: a6dccbee79fcfe945aaa25bcb96c4b34,
+        type: 3}
+      propertyPath: thisnode.description
+      value: Abstract Art
+      objectReference: {fileID: 0}
     - target: {fileID: 1706560892704332828, guid: a6dccbee79fcfe945aaa25bcb96c4b34,
         type: 3}
       propertyPath: m_Name
@@ -2714,6 +2719,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1501091959117930245, guid: a6dccbee79fcfe945aaa25bcb96c4b34,
         type: 3}
+      propertyPath: thisnode.description
+      value: Cityscapes
+      objectReference: {fileID: 0}
+    - target: {fileID: 1501091959117930245, guid: a6dccbee79fcfe945aaa25bcb96c4b34,
+        type: 3}
       propertyPath: thisnode.optionNumber
       value: 1
       objectReference: {fileID: 0}
@@ -2941,6 +2951,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Platform
+      objectReference: {fileID: 0}
+    - target: {fileID: 319851179887082056, guid: 800578a8c17767144b38c5f962c384fc,
+        type: 3}
+      propertyPath: _trackingOriginType
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 800578a8c17767144b38c5f962c384fc, type: 3}
