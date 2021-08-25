@@ -48,6 +48,7 @@ public class GuidedJumping : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CheckFocus();
         for (int i = 0; i < ordered.Count; i++)
         {
             foreach (KeyValuePair<int, GameObject> node in ordered[i])
@@ -244,16 +245,8 @@ public class GuidedJumping : MonoBehaviour
         Debug.Log(pointingTransform);
         int index = 0;
         float angle = 10;
-        /*float minDist = Mathf.Infinity;
-        float dist;*/
         for (int i = 0; i < ghostAvatars.Length; i++)
         {
-            /*dist = Vector3.Distance(ghostAvatars[i].transform.position, pointingPosition);
-            if (dist < minDist)
-            {
-                index = i;
-                minDist = dist;
-            }*/
             if (Vector3.Angle(pointingTransform.forward, ghostAvatars[i].transform.position - pointingTransform.position) < angle)
             {
                 index = i;
@@ -262,9 +255,6 @@ public class GuidedJumping : MonoBehaviour
         chosenNode = index;
         Debug.Log("Node " + chosenNode + " selected!");
         paused = false;
-        /*if (minDist < 1)
-        {
-        }*/
     }
 
     public void Stop()
@@ -284,7 +274,7 @@ public class GuidedJumping : MonoBehaviour
 
     public void Countdown(int t)
     {
-        Debug.Log(waitTime - t + " Seconds left");
+        //Debug.Log(waitTime - t + " Seconds left");
         float width = ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().startWidth;
         if (t == waitTime)
         {
@@ -296,6 +286,11 @@ public class GuidedJumping : MonoBehaviour
         }
         ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().startWidth = width;
         ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().endWidth = width;
+    }
+
+    void CheckFocus()
+    {
+
     }
 
     private object WaitForSeconds(int v)

@@ -47,9 +47,13 @@ public class GestureManager : MonoBehaviour
         if (hasRecognized && !currentGesture.Equals(previousGesture))
         {
             // it is a new gesture
-            Debug.Log("New Gesture found: " + currentGesture.gestureName);
-            previousGesture = currentGesture;
-            currentGesture.onRecognized.Invoke();
+            // check if gesture made in correct position
+            if (GestureInView())
+            {
+                Debug.Log("New Gesture found: " + currentGesture.gestureName);
+                previousGesture = currentGesture;
+                currentGesture.onRecognized.Invoke();
+            }
         }
     }
 
@@ -108,6 +112,11 @@ public class GestureManager : MonoBehaviour
             }
         }
         return currentGesture;
+    }
+
+    bool GestureInView()
+    {
+        return true;
     }
 
 }
