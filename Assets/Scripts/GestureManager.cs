@@ -48,7 +48,8 @@ public class GestureManager : MonoBehaviour
         {
             // it is a new gesture
             // check if gesture made in correct position
-            if (GestureInView())
+            string handtype = skeleton.transform.parent.name;
+            if (GameObject.Find("Platform").GetComponent<GuidedJumping>().GestureInView(handtype))
             {
                 Debug.Log("New Gesture found: " + currentGesture.gestureName);
                 previousGesture = currentGesture;
@@ -114,9 +115,5 @@ public class GestureManager : MonoBehaviour
         return currentGesture;
     }
 
-    bool GestureInView()
-    {
-        return true;
-    }
 
 }

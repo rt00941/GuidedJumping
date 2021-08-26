@@ -16,6 +16,7 @@ public class GuidedJumping : MonoBehaviour
     private Transform currentWaypoints;
     public bool paused;
     public bool reset;
+    private bool focused;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
     private int chosenNode;
     private int waitTime;
@@ -29,6 +30,7 @@ public class GuidedJumping : MonoBehaviour
         chosenNode = 0;
         paused = false;
         reset = false;
+        focused = true;
         waitTime = 3;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
         arrows = GameObject.FindGameObjectsWithTag("Arrow");
@@ -304,13 +306,50 @@ public class GuidedJumping : MonoBehaviour
 
     void CheckFocus()
     {
-        float angle = 10;
-//        Debug.Log(Vector3.Angle(ghostAvatars[chosenNode].transform.forward, eyes.transform.position - ghostAvatars[chosenNode].transform.position));
-        Debug.Log(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position));
-        if (Vector3.Angle(ghostAvatars[chosenNode].transform.forward, eyes.transform.position - ghostAvatars[chosenNode].transform.position) < angle)
+        float angle = 60;
+        if (Vector3.Distance(eyes.transform.position, ghostAvatars[chosenNode].transform.position) > 2)
         {
-            Debug.Log("Not In Focus");
+            if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
+            {
+                Stop();
+                focused = false;
+            }
+            else if (focused == false)
+            {
+                Restart();
+                focused = true;
+            }
         }
+    }
+
+    public bool GestureInView(string handside)
+    {
+        GameObject hand;
+        if (handside == "RightHandAnchor")
+        {
+            hand = righthand;
+        }
+        else if (handside == "LeftHandAnchor")
+        {
+            hand = lefthand;
+        }
+        else
+        {
+            hand = null;
+        }
+        float angle = 60;
+        if (hand != null)
+        {
+            if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 2)
+            {
+                if (!(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) < angle))
+                {
+                    Debug.LogError("Gesture in View");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private object WaitForSeconds(int v)
