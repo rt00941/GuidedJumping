@@ -18,7 +18,7 @@ public class GuidedJumping : MonoBehaviour
     public bool reset;
     private bool focused;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
-    private int chosenNode;
+    public int chosenNode;
     private int waitTime;
     private Material selectedMat;
     private Material choiceMat;
@@ -81,13 +81,15 @@ public class GuidedJumping : MonoBehaviour
 
     IEnumerator jumping()
     {
-        for (int i = 0; i < ordered.Count; i++)
+        int nodenum = 0;
+        label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Paused";
+        while (nodenum < ordered.Count)
         {
-            if (ordered[i].Count > 1)
+            if (ordered[nodenum].Count > 1)
             {
                 Debug.Log("THERE IS A CHOICE HERE!!");
                 paused = true;
-                foreach (KeyValuePair<int,GameObject> node in ordered[i])
+                foreach (KeyValuePair<int,GameObject> node in ordered[nodenum])
                 {
                     currentWaypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
                     SetPreview(node.Key,currentWaypoints.GetChild(0), choiceMat);
@@ -110,7 +112,7 @@ public class GuidedJumping : MonoBehaviour
             }
             paused = false;
             ResetPreview(selectedMat);
-            currentNode = ordered[i][chosenNode];
+            currentNode = ordered[nodenum][chosenNode];
             currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {
@@ -201,7 +203,12 @@ public class GuidedJumping : MonoBehaviour
             ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
             gameObject.transform.position = currentNode.transform.position;
             gameObject.transform.rotation = currentNode.transform.rotation;
+            chosenNode = 0;
+            nodenum = currentNode.GetComponent<Node>().thisnode.nextnode;
         }
+        paused = true;
+        label.SetActive(true);
+        label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TOUR";
     }
 
     private void orderNodes()

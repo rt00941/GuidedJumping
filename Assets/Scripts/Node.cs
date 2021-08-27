@@ -8,6 +8,7 @@ public struct NodeProperties
     public int index;
     // -1 if not optional else >= 0
     public int optionNumber;
+    public int nextnode;
     public string description;
     public GameObject waypoints;
 }
