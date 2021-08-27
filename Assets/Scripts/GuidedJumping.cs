@@ -18,8 +18,9 @@ public class GuidedJumping : MonoBehaviour
     public bool reset;
     private bool focused;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
-    public int chosenNode;
+    private int chosenNode;
     private int waitTime;
+    private float countdowntime;
     private Material selectedMat;
     private Material choiceMat;
 
@@ -32,6 +33,7 @@ public class GuidedJumping : MonoBehaviour
         reset = false;
         focused = true;
         waitTime = 3;
+        countdowntime = 0;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
         arrows = GameObject.FindGameObjectsWithTag("Arrow");
         foreach (GameObject a in arrows)
@@ -57,6 +59,13 @@ public class GuidedJumping : MonoBehaviour
     void Update()
     {
         CheckFocus();
+        countdowntime += Time.deltaTime;
+        if (countdowntime >= waitTime)
+        {
+            Countdown(waitTime);
+            countdowntime = 0;
+        }
+        Countdown(countdowntime);
         for (int i = 0; i < ordered.Count; i++)
         {
             foreach (KeyValuePair<int, GameObject> node in ordered[i])
@@ -119,35 +128,15 @@ public class GuidedJumping : MonoBehaviour
                 SetPreview(chosenNode, currentWaypoints.GetChild(j),selectedMat);
                 while (!paused) 
                 {
-                    for (int t = 0; t <= waitTime; t++)
-                    {
-                        Countdown(t); 
-                        if (t != waitTime)
-                        {
-                            yield return new WaitForSeconds(1);
-                        }
-                        else
-                        {
-                            yield return new WaitForSeconds(0.1f);
-                        }
-                    }
+                    yield return new WaitForSeconds(waitTime);
+                    yield return new WaitForSeconds(0.1f);
                     yield return new WaitUntil(() => !paused); 
                     if (!paused)
                     {
                         if (reset)
                         {
-                            for (int t = 0; t <= waitTime; t++)
-                            {
-                                Countdown(t); 
-                                if (t != waitTime)
-                                {
-                                    yield return new WaitForSeconds(1);
-                                }
-                                else
-                                {
-                                    yield return new WaitForSeconds(0.1f);
-                                }
-                            }
+                            yield return new WaitForSeconds(waitTime);
+                            yield return new WaitForSeconds(0.1f);
                             reset = false;
                         }
                         paused = true;
@@ -163,35 +152,15 @@ public class GuidedJumping : MonoBehaviour
             SetPreview(chosenNode, currentNode.transform,selectedMat);
             while (!paused)
             {
-                for (int t = 0; t <= waitTime; t++)
-                {
-                    Countdown(t); 
-                    if (t != waitTime)
-                    {
-                        yield return new WaitForSeconds(1);
-                    }
-                    else
-                    {
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                }
+                yield return new WaitForSeconds(waitTime);
+                yield return new WaitForSeconds(0.1f);
                 yield return new WaitUntil(() => !paused);
                 if (!paused)
                 {
                     if (reset)
                     {
-                        for (int t = 0; t <= waitTime; t++)
-                        {
-                            Countdown(t);
-                            if (t != waitTime)
-                            {
-                                yield return new WaitForSeconds(1);
-                            }
-                            else
-                            {
-                                yield return new WaitForSeconds(0.1f);
-                            }
-                        }
+                        yield return new WaitForSeconds(waitTime);
+                        yield return new WaitForSeconds(0.1f);
                         reset = false;
                     }                    
                     paused = true;
@@ -295,11 +264,10 @@ public class GuidedJumping : MonoBehaviour
         reset = true;
     }
 
-    public void Countdown(int t)
+    public void Countdown(float t)
     {
-        //Debug.Log(waitTime - t + " Seconds left");
         float width = ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().startWidth;
-        if (t == waitTime)
+        if (t >= waitTime)
         {
             width = 0;
         }
