@@ -11,8 +11,6 @@ public class GuidedJumping : MonoBehaviour
     public GameObject[] arrows;
     private GameObject label;
     private GameObject eyes;
-    private GameObject lefthand;
-    private GameObject righthand;
     private Transform currentWaypoints;
     public bool paused;
     public bool reset;
@@ -43,8 +41,6 @@ public class GuidedJumping : MonoBehaviour
         label = GameObject.Find("Pause Label");
         label.SetActive(false);
         eyes = GameObject.Find("CenterEyeAnchor");
-        lefthand = GameObject.Find("LeftHandAnchor");
-        righthand = GameObject.Find("RighttHandAnchor");
         choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
         selectedMat = Resources.Load<Material>("Materials/GhostAvatarMaterial");
         ResetPreview(selectedMat);
@@ -59,13 +55,19 @@ public class GuidedJumping : MonoBehaviour
     void Update()
     {
         CheckFocus();
-        countdowntime += Time.deltaTime;
-        if (countdowntime >= waitTime)
+        if (!paused)
         {
-            Countdown(waitTime);
+            countdowntime += Time.deltaTime;
+            if (countdowntime >= waitTime)
+            {
+                countdowntime = 0;
+            }
+            Countdown(countdowntime);
+        }
+        if (reset)
+        {
             countdowntime = 0;
         }
-        Countdown(countdowntime);
         for (int i = 0; i < ordered.Count; i++)
         {
             foreach (KeyValuePair<int, GameObject> node in ordered[i])
@@ -129,14 +131,12 @@ public class GuidedJumping : MonoBehaviour
                 while (!paused) 
                 {
                     yield return new WaitForSeconds(waitTime);
-                    yield return new WaitForSeconds(0.1f);
                     yield return new WaitUntil(() => !paused); 
                     if (!paused)
                     {
                         if (reset)
                         {
                             yield return new WaitForSeconds(waitTime);
-                            yield return new WaitForSeconds(0.1f);
                             reset = false;
                         }
                         paused = true;
@@ -153,14 +153,12 @@ public class GuidedJumping : MonoBehaviour
             while (!paused)
             {
                 yield return new WaitForSeconds(waitTime);
-                yield return new WaitForSeconds(0.1f);
                 yield return new WaitUntil(() => !paused);
                 if (!paused)
                 {
                     if (reset)
                     {
                         yield return new WaitForSeconds(waitTime);
-                        yield return new WaitForSeconds(0.1f);
                         reset = false;
                     }                    
                     paused = true;
@@ -234,14 +232,18 @@ public class GuidedJumping : MonoBehaviour
     public void Choice(Transform pointingTransform)
     {
         Debug.Log("CHOICE GESTURE SELECTED");
-        Debug.Log(pointingTransform);
         int index = 0;
-        float angle = 10;
+        float angle = 30;
         for (int i = 0; i < ghostAvatars.Length; i++)
         {
+            /*Debug.Log(Vector3.Angle(pointingTransform.forward, ghostAvatars[i].transform.position - pointingTransform.position));
             if (Vector3.Angle(pointingTransform.forward, ghostAvatars[i].transform.position - pointingTransform.position) < angle)
+            {*/
+            Debug.Log(Vector3.Angle(ghostAvatars[i].transform.forward, pointingTransform.position - ghostAvatars[i].transform.position));
+            if (Vector3.Angle(ghostAvatars[i].transform.forward, pointingTransform.position - ghostAvatars[i].transform.position) < angle)
             {
-                index = i;
+
+                    index = i;
             }
         }
         chosenNode = index;
@@ -300,26 +302,16 @@ public class GuidedJumping : MonoBehaviour
     public bool GestureInView(string handside)
     {
         GameObject hand;
-        if (handside == "RightHandAnchor")
-        {
-            hand = righthand;
-        }
-        else if (handside == "LeftHandAnchor")
-        {
-            hand = lefthand;
-        }
-        else
-        {
-            hand = null;
-        }
-        float angle = 60;
+        hand = GameObject.Find(handside);
+        float angle = 50;
         if (hand != null)
         {
-            if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 2)
+            //Debug.Log(Vector3.Distance(eyes.transform.position, hand.transform.position) + " " + handside);
+            //Debug.Log(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) + " " + handside);
+            if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.25f)
             {
                 if (!(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) < angle))
                 {
-                    Debug.LogError("Gesture in View");
                     return true;
                 }
             }

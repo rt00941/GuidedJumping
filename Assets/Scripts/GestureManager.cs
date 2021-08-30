@@ -21,12 +21,14 @@ public class GestureManager : MonoBehaviour
     public List<Gesture> gestures;
     private List<OVRBone> fingerBones;
     private Gesture previousGesture;
+    string handtype;
 
     // Start is called before the first frame update
     void Start()
     {
         fingerBones = new List<OVRBone>(skeleton.Bones);
         previousGesture = new Gesture();
+        handtype = skeleton.transform.parent.name;
     }
 
     // Update is called once per frame
@@ -41,16 +43,15 @@ public class GestureManager : MonoBehaviour
             Save();
         }
 
-        Gesture currentGesture = Recognize();
-        bool hasRecognized = !currentGesture.Equals(new Gesture());
-        // check if new gesture
-        if (hasRecognized && !currentGesture.Equals(previousGesture))
+        // check if gesture made in correct position
+        if (GameObject.Find("Platform").GetComponent<GuidedJumping>().GestureInView(handtype))
         {
-            // it is a new gesture
-            // check if gesture made in correct position
-            string handtype = skeleton.transform.parent.name;
-            if (GameObject.Find("Platform").GetComponent<GuidedJumping>().GestureInView(handtype))
+            Gesture currentGesture = Recognize();
+            bool hasRecognized = !currentGesture.Equals(new Gesture());
+            // check if new gesture
+            if (hasRecognized && !currentGesture.Equals(previousGesture))
             {
+                // it is a new gesture
                 Debug.Log("New Gesture found: " + currentGesture.gestureName);
                 previousGesture = currentGesture;
                 currentGesture.onRecognized.Invoke();
@@ -79,7 +80,6 @@ public class GestureManager : MonoBehaviour
         {
             if(bone.Id == OVRSkeleton.BoneId.Hand_IndexTip)
             {
-                Debug.Log(bone.Transform.position);
                 GameObject.Find("Platform").GetComponent<GuidedJumping>().Choice(bone.Transform);
             }
         }
