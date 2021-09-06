@@ -15,8 +15,9 @@ public class GuidedJumping : MonoBehaviour
     public bool paused;
     public bool reset;
     private bool focused;
+    private bool countdown;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
-    private int chosenNode;
+    public int chosenNode;
     private int waitTime;
     private float countdowntime;
     private Material selectedMat;
@@ -30,6 +31,7 @@ public class GuidedJumping : MonoBehaviour
         paused = false;
         reset = false;
         focused = true;
+        countdown = false;
         waitTime = 3;
         countdowntime = 0;
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
@@ -39,6 +41,7 @@ public class GuidedJumping : MonoBehaviour
             a.SetActive(false);
         }
         label = GameObject.Find("Pause Label");
+        label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Paused";
         label.SetActive(false);
         eyes = GameObject.Find("CenterEyeAnchor");
         choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
@@ -55,7 +58,7 @@ public class GuidedJumping : MonoBehaviour
     void Update()
     {
         CheckFocus();
-        if (!paused)
+        if (countdown)
         {
             countdowntime += Time.deltaTime;
             if (countdowntime >= waitTime)
@@ -64,7 +67,7 @@ public class GuidedJumping : MonoBehaviour
             }
             Countdown(countdowntime);
         }
-        if (reset)
+        if (reset || paused)
         {
             countdowntime = 0;
         }
@@ -128,10 +131,11 @@ public class GuidedJumping : MonoBehaviour
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {
                 SetPreview(chosenNode, currentWaypoints.GetChild(j),selectedMat);
+                countdown = true;
                 while (!paused) 
                 {
                     yield return new WaitForSeconds(waitTime);
-                    yield return new WaitUntil(() => !paused); 
+                    yield return new WaitUntil(() => !paused);
                     if (!paused)
                     {
                         if (reset)
@@ -143,6 +147,7 @@ public class GuidedJumping : MonoBehaviour
                     }
                 }
                 paused = false;
+                countdown = false;
                 ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
                 ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
                 ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
@@ -150,6 +155,7 @@ public class GuidedJumping : MonoBehaviour
                 gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation;
             }
             SetPreview(chosenNode, currentNode.transform,selectedMat);
+            countdown = true; 
             while (!paused)
             {
                 yield return new WaitForSeconds(waitTime);
@@ -158,6 +164,7 @@ public class GuidedJumping : MonoBehaviour
                 {
                     if (reset)
                     {
+                        countdown = true;
                         yield return new WaitForSeconds(waitTime);
                         reset = false;
                     }                    
@@ -165,6 +172,7 @@ public class GuidedJumping : MonoBehaviour
                 }
             }
             paused = false;
+            countdown = false;
             ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
             ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
             ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
@@ -306,8 +314,6 @@ public class GuidedJumping : MonoBehaviour
         float angle = 50;
         if (hand != null)
         {
-            //Debug.Log(Vector3.Distance(eyes.transform.position, hand.transform.position) + " " + handside);
-            //Debug.Log(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) + " " + handside);
             if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.25f)
             {
                 if (!(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) < angle))
