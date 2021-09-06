@@ -13,6 +13,7 @@ public class GuidedJumping : MonoBehaviour
     private GameObject eyes;
     private Transform currentWaypoints;
     public bool paused;
+    public bool choice;
     public bool reset;
     private bool focused;
     private bool countdown;
@@ -52,6 +53,7 @@ public class GuidedJumping : MonoBehaviour
         gameObject.transform.position = currentNode.transform.position;
         gameObject.transform.rotation = currentNode.transform.rotation;
         StartCoroutine(jumping());
+        choice = false;
     }
 
     // Update is called once per frame
@@ -102,6 +104,7 @@ public class GuidedJumping : MonoBehaviour
             if (ordered[nodenum].Count > 1)
             {
                 Debug.Log("THERE IS A CHOICE HERE!!");
+                choice = true;
                 paused = true;
                 foreach (KeyValuePair<int,GameObject> node in ordered[nodenum])
                 {
@@ -123,6 +126,7 @@ public class GuidedJumping : MonoBehaviour
                 arrows[chosenNode].GetComponentInChildren<TMPro.TextMeshPro>().text = "Selected!";
                 yield return new WaitForSeconds(0.5f);
                 arrows[chosenNode].SetActive(false);
+                choice = false;
             }
             paused = false;
             ResetPreview(selectedMat);
@@ -296,12 +300,18 @@ public class GuidedJumping : MonoBehaviour
         {
             if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
             {
-                Stop();
+                if (!choice)
+                {
+                    Stop();
+                }
                 focused = false;
             }
             else if (focused == false)
             {
-                Restart();
+                if (!choice)
+                {
+                    Restart();
+                }
                 focused = true;
             }
         }
