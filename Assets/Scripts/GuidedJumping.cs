@@ -254,7 +254,6 @@ public class GuidedJumping : MonoBehaviour
             Debug.Log(Vector3.Angle(ghostAvatars[i].transform.forward, pointingTransform.position - ghostAvatars[i].transform.position));
             if (Vector3.Angle(ghostAvatars[i].transform.forward, pointingTransform.position - ghostAvatars[i].transform.position) < angle)
             {
-
                     index = i;
             }
         }
@@ -268,6 +267,7 @@ public class GuidedJumping : MonoBehaviour
         Debug.Log("STOP GESTURE SELECTED");
         label.SetActive(true);
         paused = true;
+        reset = true;
     }
 
     public void Restart()
@@ -300,7 +300,7 @@ public class GuidedJumping : MonoBehaviour
         {
             if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
             {
-                if (!choice)
+                if ((!choice) && (!paused))
                 {
                     Stop();
                 }
@@ -308,7 +308,7 @@ public class GuidedJumping : MonoBehaviour
             }
             else if (focused == false)
             {
-                if (!choice)
+                if ((!choice) && (!reset))
                 {
                     Restart();
                 }
