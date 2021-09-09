@@ -15,7 +15,7 @@ public class GuidedJumping : MonoBehaviour
     public bool paused;
     public bool choice;
     public bool reset;
-    private bool focused;
+    public bool focused;
     private bool countdown;
     private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
     public int chosenNode;
@@ -52,8 +52,8 @@ public class GuidedJumping : MonoBehaviour
         currentNode = ordered[0][chosenNode];
         gameObject.transform.position = currentNode.transform.position;
         gameObject.transform.rotation = currentNode.transform.rotation;
-        StartCoroutine(jumping());
         choice = false;
+        StartCoroutine(jumping());
     }
 
     // Update is called once per frame
@@ -69,10 +69,16 @@ public class GuidedJumping : MonoBehaviour
             }
             Countdown(countdowntime);
         }
-        if (reset || paused)
+        if (reset)
+        {
+            countdowntime = 0;
+            reset = false;
+        }
+        else if (paused)
         {
             countdowntime = 0;
         }
+        //Debug.Log(countdowntime);
         for (int i = 0; i < ordered.Count; i++)
         {
             foreach (KeyValuePair<int, GameObject> node in ordered[i])
@@ -92,6 +98,14 @@ public class GuidedJumping : MonoBehaviour
         else
         {
             label.SetActive(false);
+        }
+        if (choice || !focused)
+        {
+            Stop();
+        }
+        else if (paused && !choice && focused)
+        {
+            Restart();
         }
     }
 
@@ -186,6 +200,8 @@ public class GuidedJumping : MonoBehaviour
             nodenum = currentNode.GetComponent<Node>().thisnode.nextnode;
         }
         paused = true;
+        choice = true;
+        focused = false;
         label.SetActive(true);
         label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TOUR";
     }
@@ -264,7 +280,7 @@ public class GuidedJumping : MonoBehaviour
 
     public void Stop()
     {
-        Debug.Log("STOP GESTURE SELECTED");
+        /*Debug.Log("STOP GESTURE SELECTED");*/
         label.SetActive(true);
         paused = true;
         reset = true;
@@ -272,7 +288,7 @@ public class GuidedJumping : MonoBehaviour
 
     public void Restart()
     {
-        Debug.Log("RESTART GESTURE SELECTED");
+        /*Debug.Log("RESTART GESTURE SELECTED");*/
         label.SetActive(false);
         paused = false;
         reset = true;
@@ -300,18 +316,10 @@ public class GuidedJumping : MonoBehaviour
         {
             if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
             {
-                if ((!choice) && (!paused))
-                {
-                    Stop();
-                }
                 focused = false;
             }
-            else if (focused == false)
+            else if ((Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
             {
-                if ((!choice) && (!reset))
-                {
-                    Restart();
-                }
                 focused = true;
             }
         }
