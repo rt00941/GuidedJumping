@@ -35,6 +35,7 @@ public class Choice : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.N))
         {
+            GetComponent<Logging>().Write();
             if (SceneManager.GetActiveScene().buildIndex == 2)
             {
                 label.GetComponentInChildren<TMPro.TextMeshPro>().text = "End of Study";
