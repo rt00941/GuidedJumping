@@ -22,8 +22,10 @@ public class JumpingVisual : MonoBehaviour
     private GameObject[] nodes;
     private GameObject currentNode;
     private GameObject[] ghostAvatars;
-    public GameObject[] arrows;
+    private GameObject[] arrows;
     private GameObject label;
+    private GameObject lhand;
+    private GameObject rhand;
 
     // Start is called before the first frame update
     void Start()
@@ -31,11 +33,14 @@ public class JumpingVisual : MonoBehaviour
         teleportIndicator = GameObject.Find("TeleIndicator");
         teleportIndicator.GetComponentInChildren<MeshRenderer>().enabled = false;
         teleportEnabled = false;
-        controllerObject = GameObject.Find("/ViewingSetup/Platform/ControllerLeft");
-        platformObject = controllerObject.gameObject.transform.parent.gameObject;
-        rotateObject = GameObject.Find("/ViewingSetup/Platform/HMDCamera");
-        teleportIndicator.transform.SetParent(platformObject.transform.parent.transform);
-        teleportAction = OVRInput.Button.PrimaryHandTrigger;
+        controllerObject = GameObject.Find("RightHandAnchor");
+        platformObject = GameObject.Find("TrackingSpace");
+        rotateObject = GameObject.Find("CenterEyeAnchor");
+        teleportIndicator.transform.SetParent(transform);
+        lhand = GameObject.Find("LeftControllerAnchor").transform.GetChild(0).GetChild(2).gameObject;
+        lhand.SetActive(true);
+        rhand = GameObject.Find("RightControllerAnchor").transform.GetChild(0).GetChild(3).gameObject;
+        rhand.SetActive(true);
         ghostAvatars = GameObject.FindGameObjectsWithTag("GhostAvatar");
         arrows = GameObject.FindGameObjectsWithTag("Arrow");
         foreach (GameObject a in arrows)
@@ -51,7 +56,7 @@ public class JumpingVisual : MonoBehaviour
     {
         if (OVRInput.GetDown(teleportAction))
         {
-            teleportEnabled = true;
+                teleportEnabled = true;
         }
         if (teleportEnabled)
         {
@@ -93,6 +98,8 @@ public class JumpingVisual : MonoBehaviour
                 Vector3 translateVector = bezier.EndPoint - groundPosition;
 
                 platformObject.transform.position += translateVector;
+
+                platformObject.transform.position = new Vector3(platformObject.transform.position.x, 0.8f, platformObject.transform.position.z);
 
                 platformObject.transform.RotateAround(rotateObject.transform.position, Vector3.up, -ControllerRotation); //Sets the User rotaion as the indicator rotation
             }

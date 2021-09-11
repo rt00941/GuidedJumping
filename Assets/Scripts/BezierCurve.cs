@@ -21,6 +21,8 @@ public class BezierCurve : MonoBehaviour
     private GameObject controllerObject;
     private Transform controllerTrans;
     private bool drawLine = false;
+    private float maxjump;
+    private float jumpdistance;
 
     // referenced https://github.com/FusedVR/GearTeleporter/blame/master/Assets/Teleporter/Scripts/Bezier.cs 
     // Start is called before the first frame update
@@ -31,6 +33,7 @@ public class BezierCurve : MonoBehaviour
         curvedLine.enabled = false;
         extendStep = 18f;
         controllerObject = GameObject.Find("RightControllerAnchor");
+        maxjump = 3.0f;
     }
 
     // Update is called once per frame
@@ -96,11 +99,22 @@ public class BezierCurve : MonoBehaviour
                 nextPosition = CalculateBezierPoint(t, controlPoints[0], controlPoints[1], controlPoints[2]);
             }
 
+            // only detect endpoint if it is less than maxjump away            
+            jumpdistance = Vector3.Distance(endpoint, controllerTrans.position);
             if (CheckCollider(prevPosition, nextPosition))
             {
-                curvedLine.SetPosition(i, endpoint);
-                endPointDetected = true;
-                return;
+                if (jumpdistance < maxjump)
+                {
+                    curvedLine.SetPosition(i, endpoint);
+                    endPointDetected = true;
+                    return;
+                }
+                else
+                {
+                    curvedLine.SetPosition(i, endpoint);
+                    endPointDetected = false;
+                    return;
+                }
             }
 
             else

@@ -29,7 +29,6 @@ public class Logging : MonoBehaviour
     {
         datatext += line;
         datatext += '\n';
-        datatext += '\n';
     }
 
     public void Write()

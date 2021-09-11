@@ -23,10 +23,12 @@ public class GuidedJumping : MonoBehaviour
     private float countdowntime;
     private Material selectedMat;
     private Material choiceMat;
+    private float timer;
 
     // Start is called before the first frame update
     void Start()
     {
+        timer = 0.0f;
         nodes = GameObject.FindGameObjectsWithTag("Node");
         chosenNode = 0;
         paused = false;
@@ -59,6 +61,7 @@ public class GuidedJumping : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timer += Time.deltaTime;
         CheckFocus();
         if (countdown)
         {
@@ -117,9 +120,13 @@ public class GuidedJumping : MonoBehaviour
         label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Paused";
         while (nodenum < ordered.Count)
         {
+            GetComponent<Logging>().AddData("NODE " + nodenum.ToString());
+            GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
             if (ordered[nodenum].Count > 1)
             {
                 Debug.Log("THERE IS A CHOICE HERE!!");
+                GetComponent<Logging>().AddData("CHOICE");
+                GetComponent<Logging>().AddData(timer.ToString() +", "+ transform.position + ", " + transform.eulerAngles);
                 choice = true;
                 paused = true;
                 foreach (KeyValuePair<int,GameObject> node in ordered[nodenum])
@@ -132,6 +139,8 @@ public class GuidedJumping : MonoBehaviour
                     arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z);
                     arrows[node.Key].GetComponentInChildren<TMPro.TextMeshPro>().text = node.Value.GetComponent<Node>().thisnode.description;
                     arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
+                    Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
+                    arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, curRot.y, curRot.z);
                 }
                 yield return new WaitUntil(() => !paused);
                 foreach (GameObject a in arrows)
@@ -332,7 +341,7 @@ public class GuidedJumping : MonoBehaviour
         GameObject hand;
         hand = GameObject.Find(handside);
         float angle = 50;
-        if (hand != null)
+        if (hand != null && eyes != null)
         {
             if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.25f)
             {

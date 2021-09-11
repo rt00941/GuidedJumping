@@ -7,6 +7,7 @@ public class Choice : MonoBehaviour
 {
     GameObject arrows;
     GameObject label;
+    float timeinroom;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +15,7 @@ public class Choice : MonoBehaviour
         arrows.SetActive(false);
         label = GameObject.Find("Pause Label");
         label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Starting";
+        timeinroom = Time.time;
     }
 
     // Update is called once per frame
@@ -21,6 +23,7 @@ public class Choice : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
+            GetComponent<Logging>().AddData("Guided Jumping");
             arrows.SetActive(true);
             label.GetComponentInChildren<TMPro.TextMeshPro>().text = "1";
             GetComponent<GuidedJumping>().enabled = true;
@@ -28,6 +31,7 @@ public class Choice : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
+            GetComponent<Logging>().AddData("Free Jumping");
             arrows.SetActive(true);
             label.GetComponentInChildren<TMPro.TextMeshPro>().text = "2";
             GetComponent<GuidedJumping>().enabled = false;
@@ -35,6 +39,8 @@ public class Choice : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.N))
         {
+            timeinroom = Time.time - timeinroom;
+            GetComponent<Logging>().AddData("Time Taken: " + timeinroom.ToString());
             GetComponent<Logging>().Write();
             if (SceneManager.GetActiveScene().buildIndex == 2)
             {
