@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Logging : MonoBehaviour
 {
+    public int participantNumber;
+
     // Start is called before the first frame update
     void Start()
     {

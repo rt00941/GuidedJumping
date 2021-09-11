@@ -88,6 +88,8 @@ public class GuidedJumping : MonoBehaviour
                     arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
                     arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z); 
                     arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
+                    Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
+                    arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0,curRot.y,curRot.z);
                 }
             }
         }

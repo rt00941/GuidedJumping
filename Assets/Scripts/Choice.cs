@@ -35,8 +35,15 @@ public class Choice : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.N))
         {
-            label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Switching Room";
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            if (SceneManager.GetActiveScene().buildIndex == 2)
+            {
+                label.GetComponentInChildren<TMPro.TextMeshPro>().text = "End of Study";
+            }
+            else
+            {
+                label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Switching Room";
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            }
         }
     }
 }
