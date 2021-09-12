@@ -43,6 +43,7 @@ public class GuidedJumping : MonoBehaviour
     private List<OVRBone> fingerBones;
     private Gesture previousGesture;
     string handtype;
+    private GameObject hand;
 
     // Start is called before the first frame update
     void Start()
@@ -96,13 +97,9 @@ public class GuidedJumping : MonoBehaviour
             {
                 countdowntime = 0;
             }
-            Countdown(countdowntime);
+            Debug.Log(countdowntime);
         }
-        if (reset)
-        {
-            countdowntime = 0;
-            reset = false;
-        }
+        Countdown(countdowntime);
         for (int i = 0; i < ordered.Count; i++)
         {
             foreach (KeyValuePair<int, GameObject> node in ordered[i])
@@ -135,6 +132,15 @@ public class GuidedJumping : MonoBehaviour
                 currentGesture.onRecognized.Invoke();
             }
         }
+
+        if (paused)
+        {
+            label.SetActive(true);
+        }
+        else
+        {
+            label.SetActive(false);
+        }
     }
 
     IEnumerator jumping()
@@ -162,7 +168,7 @@ public class GuidedJumping : MonoBehaviour
                     Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
                     arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, curRot.y, curRot.z);
                 }
-                yield return new WaitUntil(() => !paused);
+                yield return new WaitUntil(() => !choice);
                 foreach (GameObject a in arrows)
                 {
                     a.SetActive(false);
@@ -172,7 +178,6 @@ public class GuidedJumping : MonoBehaviour
                 GetComponent<Logging>().AddData("SELECTED " + chosenNode.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
                 yield return new WaitForSeconds(0.5f);
                 arrows[chosenNode].SetActive(false);
-                choice = false;
                 Restart();
             }
             paused = false;
@@ -187,7 +192,6 @@ public class GuidedJumping : MonoBehaviour
                     countdown = true;
                     yield return new WaitForSeconds(waitTime);
                     countdown = false;
-                    countdowntime = 0;
                     yield return new WaitUntil(() => !paused);
                     if (!paused)
                     {
@@ -196,9 +200,9 @@ public class GuidedJumping : MonoBehaviour
                             countdown = true;
                             yield return new WaitForSeconds(waitTime);
                             countdown = false;
-                            countdowntime = 0;
                             reset = false;
                         }
+                        //paused = true;
                         Stop();
                     }
                 }
@@ -216,7 +220,6 @@ public class GuidedJumping : MonoBehaviour
                 countdown = true;
                 yield return new WaitForSeconds(waitTime);
                 countdown = false;
-                countdowntime = 0;
                 yield return new WaitUntil(() => !paused);
                 if (!paused)
                 {
@@ -225,9 +228,9 @@ public class GuidedJumping : MonoBehaviour
                         countdown = true;
                         yield return new WaitForSeconds(waitTime);
                         countdown = false;
-                        countdowntime = 0;
                         reset = false;
                     }
+                    //paused = true;
                     Stop();
                 }
             }
@@ -305,12 +308,14 @@ public class GuidedJumping : MonoBehaviour
     {
         int index = -1;
         float minangle = Mathf.Infinity;
+        hand = GameObject.Find(handtype);
         for (int i = 0; i < ghostAvatars.Length; i++)
         {
-            if (eyes != null)
+            if (eyes != null && hand != null)
             {
                 float temp = Vector3.Angle(ghostAvatars[i].transform.forward, eyes.transform.position - ghostAvatars[i].transform.position);
-                if (minangle > temp)
+                float temp2 = Vector3.Angle(ghostAvatars[i].transform.forward, hand.transform.position - ghostAvatars[i].transform.position);
+                if (minangle > temp || minangle > temp2)
                 {
                     minangle = temp;
                     index = i;
@@ -321,20 +326,17 @@ public class GuidedJumping : MonoBehaviour
         {
             chosenNode = index;
             choice = false;
-            Restart();
         }
     }
     public void Stop()
     {
-        label.SetActive(true);
         paused = true;
-        reset = true;
+        //reset = true;
         GetComponent<Logging>().AddData("STOPPED: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
     }
 
     public void Restart()
     {
-        label.SetActive(false);
         paused = false;
         reset = true; 
         GetComponent<Logging>().AddData("RESTART: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
@@ -370,7 +372,7 @@ public class GuidedJumping : MonoBehaviour
                 else if ((Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
                 {
                     focused = true;
-                    if (!choice)
+                    if (!choice && paused)
                     {
                         Restart();
                     }
@@ -382,7 +384,6 @@ public class GuidedJumping : MonoBehaviour
     // Gestures Code
     public bool GestureInView(string handside)
     {
-        GameObject hand;
         hand = GameObject.Find(handside);
         float angle = 80;
         if (hand != null && eyes != null)
