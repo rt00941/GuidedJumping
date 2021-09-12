@@ -85,7 +85,10 @@ public class GuidedJumping : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        CheckFocus();
+        if (currentNode.GetComponent<Node>().thisnode.index != 0 && !choice)
+        {
+            CheckFocus();
+        }
         if (countdown)
         {
             countdowntime += Time.deltaTime;
@@ -113,18 +116,6 @@ public class GuidedJumping : MonoBehaviour
                     arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0,curRot.y,curRot.z);
                 }
             }
-        }
-        if (paused)
-        {
-            label.SetActive(true);
-        }
-        else
-        {
-            label.SetActive(false);
-        }
-        if (!paused && (choice || !focused || gestureactive == 0))
-        {
-            Stop();
         }
         if (fingerBones.Count == 0)
         {
@@ -157,7 +148,7 @@ public class GuidedJumping : MonoBehaviour
             {
                 GetComponent<Logging>().AddData("CHOICE: " + timer.ToString() +", "+ transform.position + ", " + transform.eulerAngles);
                 choice = true;
-                paused = true;
+                Stop();
                 foreach (KeyValuePair<int,GameObject> node in ordered[nodenum])
                 {
                     currentWaypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
@@ -182,10 +173,7 @@ public class GuidedJumping : MonoBehaviour
                 yield return new WaitForSeconds(0.5f);
                 arrows[chosenNode].SetActive(false);
                 choice = false;
-                if (paused && !choice && focused && gestureactive != 0)
-                {
-                    Restart();
-                }
+                Restart();
             }
             paused = false;
             ResetPreview(selectedMat);
@@ -211,7 +199,7 @@ public class GuidedJumping : MonoBehaviour
                             countdowntime = 0;
                             reset = false;
                         }
-                        paused = true;
+                        Stop();
                     }
                 }
                 paused = false;
@@ -239,8 +227,8 @@ public class GuidedJumping : MonoBehaviour
                         countdown = false;
                         countdowntime = 0;
                         reset = false;
-                    }                    
-                    paused = true;
+                    }
+                    Stop();
                 }
             }
             paused = false;
@@ -322,7 +310,7 @@ public class GuidedJumping : MonoBehaviour
             if (eyes != null)
             {
                 float temp = Vector3.Angle(ghostAvatars[i].transform.forward, eyes.transform.position - ghostAvatars[i].transform.position);
-                if (minangle < temp)
+                if (minangle > temp)
                 {
                     minangle = temp;
                     index = i;
@@ -333,15 +321,12 @@ public class GuidedJumping : MonoBehaviour
         {
             chosenNode = index;
             choice = false;
-            if (paused && !choice && focused && gestureactive != 0)
-            {
-                Restart();
-            }
+            Restart();
         }
-        Debug.Log(minangle);
     }
     public void Stop()
     {
+        label.SetActive(true);
         paused = true;
         reset = true;
         GetComponent<Logging>().AddData("STOPPED: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
@@ -349,6 +334,7 @@ public class GuidedJumping : MonoBehaviour
 
     public void Restart()
     {
+        label.SetActive(false);
         paused = false;
         reset = true; 
         GetComponent<Logging>().AddData("RESTART: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
@@ -379,11 +365,12 @@ public class GuidedJumping : MonoBehaviour
                 if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
                 {
                     focused = false;
+                    Stop();
                 }
                 else if ((Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
                 {
                     focused = true;
-                    if (paused && !choice && focused && gestureactive != 0)
+                    if (!choice)
                     {
                         Restart();
                     }
@@ -397,10 +384,10 @@ public class GuidedJumping : MonoBehaviour
     {
         GameObject hand;
         hand = GameObject.Find(handside);
-        float angle = 50;
+        float angle = 80;
         if (hand != null && eyes != null)
         {
-            if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.25f)
+            if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.05f)
             {
                 if (!(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) < angle))
                 {
@@ -408,7 +395,7 @@ public class GuidedJumping : MonoBehaviour
                 }
             }
         }
-        return true;
+        return false;
     }
 
     Gesture Recognize()
