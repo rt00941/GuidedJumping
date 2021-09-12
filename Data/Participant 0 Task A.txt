@@ -1,4 +1,0 @@
-Participant 0 Task A
-Guided Jumping
-Time Taken: 3.96519
-

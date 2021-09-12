@@ -33,7 +33,7 @@ public class BezierCurve : MonoBehaviour
         curvedLine.enabled = false;
         extendStep = 18f;
         controllerObject = GameObject.Find("RightControllerAnchor");
-        maxjump = 3.0f;
+        maxjump = 3.5f;
     }
 
     // Update is called once per frame

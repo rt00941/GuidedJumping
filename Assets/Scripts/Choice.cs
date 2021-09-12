@@ -40,7 +40,6 @@ public class Choice : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.N))
         {
             timeinroom = Time.time - timeinroom;
-            GetComponent<Logging>().AddData("Time Taken: " + timeinroom.ToString());
             GetComponent<Logging>().Write();
             if (SceneManager.GetActiveScene().buildIndex == 2)
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,21 +21,31 @@ public class JumpingVisual : MonoBehaviour
     // For visuals
 
     private GameObject[] nodes;
+    private int currentIndex;
     private GameObject currentNode;
     private GameObject[] ghostAvatars;
     private GameObject[] arrows;
     private GameObject label;
     private GameObject lhand;
     private GameObject rhand;
+    private Material choiceMat;
+    private Material selectedMat;
+    private Dictionary<int, Dictionary<int, GameObject>> ordered = new Dictionary<int, Dictionary<int, GameObject>>();
+    private int chosenNode;
+    private bool choice;
+    private bool pause;
+    private bool chosen;
+    private float timer;
 
     // Start is called before the first frame update
     void Start()
     {
+        timer = 0.0f;
         teleportIndicator = GameObject.Find("TeleIndicator");
         teleportIndicator.GetComponentInChildren<MeshRenderer>().enabled = false;
         teleportEnabled = false;
         controllerObject = GameObject.Find("RightHandAnchor");
-        platformObject = GameObject.Find("TrackingSpace");
+        platformObject = GameObject.Find("Platform");
         rotateObject = GameObject.Find("CenterEyeAnchor");
         teleportIndicator.transform.SetParent(transform);
         lhand = GameObject.Find("LeftControllerAnchor").transform.GetChild(0).GetChild(2).gameObject;
@@ -47,27 +58,55 @@ public class JumpingVisual : MonoBehaviour
         {
             a.SetActive(false);
         }
-        label = GameObject.Find("Pause Label"); label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Paused";
+        label = GameObject.Find("Pause Label"); 
+        label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Paused";
         label.SetActive(false);
+        choiceMat = Resources.Load<Material>("Materials/HighlightedGhostAvatarMaterial");
+        selectedMat = Resources.Load<Material>("Materials/GhostAvatarMaterial");
+        nodes = GameObject.FindGameObjectsWithTag("Node");
+        ResetPreview(selectedMat);
+        orderNodes();
+        chosenNode = 0;
+        currentIndex = 0;
+        currentNode = ordered[0][chosenNode];
+        gameObject.transform.position = currentNode.transform.position;
+        gameObject.transform.rotation = currentNode.transform.rotation;
+        choice = false;
+        pause = false;
+        chosen = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (OVRInput.GetDown(teleportAction))
+        timer += Time.deltaTime;
+        if (!pause)
         {
+            if (!choice)
+            {
+                currentNode = ordered[currentIndex][chosenNode];
+                UpdateIndex();
+                SetPreview(chosenNode, currentNode.transform, selectedMat);
+            }
+            else
+            {
+                StartCoroutine(Choose());
+            }
+            if (OVRInput.GetDown(teleportAction))
+            {
                 teleportEnabled = true;
+            }
+            if (teleportEnabled)
+            {
+                HandleTeleport();
+            }
+            if (OVRInput.GetUp(teleportAction))
+            {
+                teleportEnabled = false;
+            }
+            bezierCheck = bezier.endPointDetected;
+            ToggleTeleportMode(teleportEnabled);
         }
-        if (teleportEnabled)
-        {
-            HandleTeleport();
-        }
-        if (OVRInput.GetUp(teleportAction))
-        {
-            teleportEnabled = false;
-        }
-        bezierCheck = bezier.endPointDetected;
-        ToggleTeleportMode(teleportEnabled);
     }
 
     void HandleTeleport()
@@ -102,6 +141,8 @@ public class JumpingVisual : MonoBehaviour
                 platformObject.transform.position = new Vector3(platformObject.transform.position.x, 0.8f, platformObject.transform.position.z);
 
                 platformObject.transform.RotateAround(rotateObject.transform.position, Vector3.up, -ControllerRotation); //Sets the User rotaion as the indicator rotation
+                
+                GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
             }
         }
         else
@@ -116,6 +157,124 @@ public class JumpingVisual : MonoBehaviour
         if (!teleportEnabled)
         {
             teleportIndicator.GetComponentInChildren<MeshRenderer>().enabled = false; //set teleport indicator object inactive
+        }
+    }
+    private void orderNodes()
+    {
+        for (int i = 0; i < nodes.Length; i++)
+        {
+            NodeProperties n = nodes[i].GetComponent<Node>().thisnode;
+            if (ordered.ContainsKey(n.index))
+            {
+                ordered[n.index].Add(n.optionNumber, nodes[i]);
+            }
+            else
+            {
+                ordered.Add(n.index, new Dictionary<int, GameObject>());
+                ordered[n.index].Add(n.optionNumber, nodes[i]);
+            }
+        }
+    }
+    private void SetPreview(int index, Transform current, Material mat)
+    {
+        ghostAvatars[index].transform.parent = current;
+        ghostAvatars[index].transform.localPosition = new Vector3(0, -0.7f, 0);
+        ghostAvatars[index].transform.localEulerAngles = new Vector3(0, 0, 0);
+        ghostAvatars[index].GetComponent<MeshRenderer>().enabled = true;
+        Vector3 linepos = new Vector3(ghostAvatars[index].transform.position.x, transform.position.y, ghostAvatars[index].transform.position.z);
+        Vector3 linepos1 = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(0, linepos);
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(1, linepos1);
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().enabled = true;
+        ghostAvatars[index].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
+        ghostAvatars[index].GetComponent<MeshRenderer>().material = mat;
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().material = mat;
+    }
+    private void ResetPreview(Material mat)
+    {
+        foreach (GameObject avatar in ghostAvatars)
+        {
+            avatar.transform.GetComponent<MeshRenderer>().material = selectedMat;
+            avatar.GetComponentInChildren<LineRenderer>().material = selectedMat;
+            avatar.GetComponent<MeshRenderer>().enabled = false;
+            avatar.transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
+            avatar.transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
+        }
+    }
+
+    private void UpdateIndex()
+    {
+        float distance = Vector3.Distance(gameObject.transform.position, currentNode.transform.position);
+        Debug.Log(currentIndex);
+        if (distance < 1.5f)
+        {
+            currentIndex = currentNode.GetComponent<Node>().thisnode.nextnode;
+            GetComponent<Logging>().AddData("NODE " + currentIndex.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            chosenNode = 0;
+            chosen = false;
+            ResetPreview(selectedMat);
+        }
+        if (currentIndex >= ordered.Count)
+        {
+            label.SetActive(true);
+            label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TASK"; 
+            GetComponent<Logging>().AddData("END OF TASK");
+            GetComponent<Logging>().AddData("Time Taken: " + timer.ToString());
+            pause = true;
+        } 
+        if (ordered[currentIndex].Count > 1 && !choice && !chosen)
+        {
+            GetComponent<Logging>().AddData("CHOICE: " + timer.ToString() + ", " + transform.position + ", " + transform.eulerAngles);
+            choice = true; 
+        }
+    }
+
+    IEnumerator Choose()
+    {
+        Dictionary<int, float> distances = new Dictionary<int, float>();
+        foreach (KeyValuePair<int, GameObject> node in ordered[currentIndex])
+        {
+            SetPreview(node.Key, node.Value.transform, choiceMat);
+            arrows[node.Key].SetActive(true);
+            arrows[node.Key].transform.localPosition = new Vector3(-0.3f * node.Key, -0.1f, 0);
+            arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
+            arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z);
+            arrows[node.Key].GetComponentInChildren<TMPro.TextMeshPro>().text = node.Value.GetComponent<Node>().thisnode.description;
+            arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
+            Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
+            arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, curRot.y, curRot.z);
+            distances.Add(node.Key, Vector3.Distance(gameObject.transform.position, node.Value.transform.position));
+        }
+        float min = Mathf.Infinity;
+        int minindex = -1;
+        foreach (KeyValuePair<int, float> dist in distances)
+        {
+            if (min > dist.Value)
+            {
+                min = dist.Value;
+                minindex = dist.Key;
+            }
+        }
+        if (min < 3.0f)
+        {
+            chosenNode = minindex;
+            chosen = true;
+            foreach (GameObject a in arrows)
+            {
+                a.SetActive(false);
+            }
+            arrows[chosenNode].SetActive(true);
+            arrows[chosenNode].GetComponentInChildren<TMPro.TextMeshPro>().text = "Selected!"; 
+            GetComponent<Logging>().AddData("SELECTED " + chosenNode.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            yield return new WaitForSeconds(0.5f);
+            arrows[chosenNode].SetActive(false);
+            ResetPreview(selectedMat);
+            currentNode = ordered[currentIndex][chosenNode];
+            choice = false;
+        }
+        else
+        {
+            yield break;
         }
     }
 }
