@@ -315,7 +315,7 @@ public class GuidedJumping : MonoBehaviour
             {
                 float temp = Vector3.Angle(ghostAvatars[i].transform.forward, eyes.transform.position - ghostAvatars[i].transform.position);
                 float temp2 = Vector3.Angle(ghostAvatars[i].transform.forward, hand.transform.position - ghostAvatars[i].transform.position);
-                if (minangle > temp || minangle > temp2)
+                if (minangle > temp)
                 {
                     minangle = temp;
                     index = i;
@@ -331,7 +331,6 @@ public class GuidedJumping : MonoBehaviour
     public void Stop()
     {
         paused = true;
-        //reset = true;
         GetComponent<Logging>().AddData("STOPPED: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
     }
 
