@@ -97,7 +97,6 @@ public class GuidedJumping : MonoBehaviour
             {
                 countdowntime = 0;
             }
-            Debug.Log(countdowntime);
         }
         Countdown(countdowntime);
         for (int i = 0; i < ordered.Count; i++)
@@ -202,7 +201,6 @@ public class GuidedJumping : MonoBehaviour
                             countdown = false;
                             reset = false;
                         }
-                        //paused = true;
                         Stop();
                     }
                 }
@@ -230,7 +228,6 @@ public class GuidedJumping : MonoBehaviour
                         countdown = false;
                         reset = false;
                     }
-                    //paused = true;
                     Stop();
                 }
             }
@@ -306,26 +303,29 @@ public class GuidedJumping : MonoBehaviour
 
     public void Choose()
     {
-        int index = -1;
-        float minangle = Mathf.Infinity;
-        hand = GameObject.Find(handtype);
-        for (int i = 0; i < ghostAvatars.Length; i++)
+        if (choice)
         {
-            if (eyes != null && hand != null)
+            Debug.Log("CHOOSE");
+            int index = -1;
+            float minangle = Mathf.Infinity;
+            hand = GameObject.Find(handtype);
+            for (int i = 0; i < ghostAvatars.Length; i++)
             {
-                float temp = Vector3.Angle(ghostAvatars[i].transform.forward, eyes.transform.position - ghostAvatars[i].transform.position);
-                float temp2 = Vector3.Angle(ghostAvatars[i].transform.forward, hand.transform.position - ghostAvatars[i].transform.position);
-                if (minangle > temp)
+                if (eyes != null)
                 {
-                    minangle = temp;
-                    index = i;
+                    float temp = Vector3.Angle(ghostAvatars[i].transform.forward, eyes.transform.position - ghostAvatars[i].transform.position);
+                    if (minangle > temp)
+                    {
+                        minangle = temp;
+                        index = i;
+                    }
                 }
             }
-        }
-        if (index >= 0)
-        {
-            chosenNode = index;
-            choice = false;
+            if (index >= 0)
+            {
+                chosenNode = index;
+                choice = false;
+            }
         }
     }
     public void Stop()
@@ -385,12 +385,15 @@ public class GuidedJumping : MonoBehaviour
     {
         hand = GameObject.Find(handside);
         float angle = 80;
+        Debug.Log(hand);
+        Debug.Log(eyes);
         if (hand != null && eyes != null)
         {
             if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.05f)
             {
                 if (!(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) < angle))
                 {
+                    Debug.Log("IN VIEW");
                     return true;
                 }
             }

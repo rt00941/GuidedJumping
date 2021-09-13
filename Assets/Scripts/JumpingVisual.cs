@@ -23,6 +23,7 @@ public class JumpingVisual : MonoBehaviour
     private GameObject[] nodes;
     private int currentIndex;
     private GameObject currentNode;
+    private Transform currentWaypoints;
     private GameObject[] ghostAvatars;
     private GameObject[] arrows;
     private GameObject label;
@@ -36,6 +37,7 @@ public class JumpingVisual : MonoBehaviour
     private bool pause;
     private bool chosen;
     private float timer;
+    private int waypointnum;
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +71,7 @@ public class JumpingVisual : MonoBehaviour
         chosenNode = 0;
         currentIndex = 0;
         currentNode = ordered[0][chosenNode];
+        currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
         gameObject.transform.position = currentNode.transform.position;
         gameObject.transform.rotation = currentNode.transform.rotation;
         choice = false;
@@ -85,8 +88,9 @@ public class JumpingVisual : MonoBehaviour
             if (!choice)
             {
                 currentNode = ordered[currentIndex][chosenNode];
+                currentWaypoints = currentNode.GetComponent<Node>().thisnode.waypoints.transform;
                 UpdateIndex();
-                SetPreview(chosenNode, currentNode.transform, selectedMat);
+                SetPreview(chosenNode, currentNode.transform, selectedMat, currentWaypoints);
             }
             else
             {
@@ -106,6 +110,14 @@ public class JumpingVisual : MonoBehaviour
             }
             bezierCheck = bezier.endPointDetected;
             ToggleTeleportMode(teleportEnabled);
+        }
+        else
+        {
+            ResetPreview(selectedMat);
+            label.SetActive(true);
+            label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TASK";
+            GetComponent<Logging>().AddData("END OF TASK");
+            GetComponent<Logging>().AddData("Time Taken: " + timer.ToString());
         }
     }
 
@@ -175,16 +187,22 @@ public class JumpingVisual : MonoBehaviour
             }
         }
     }
-    private void SetPreview(int index, Transform current, Material mat)
+    private void SetPreview(int index, Transform current, Material mat, Transform waypoints)
     {
         ghostAvatars[index].transform.parent = current;
         ghostAvatars[index].transform.localPosition = new Vector3(0, -0.7f, 0);
         ghostAvatars[index].transform.localEulerAngles = new Vector3(0, 0, 0);
         ghostAvatars[index].GetComponent<MeshRenderer>().enabled = true;
-        Vector3 linepos = new Vector3(ghostAvatars[index].transform.position.x, transform.position.y, ghostAvatars[index].transform.position.z);
-        Vector3 linepos1 = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().positionCount = waypoints.childCount - waypointnum + 2;
+        Vector3 linepos = new Vector3(transform.position.x, 0.0f, transform.position.z); 
         ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(0, linepos);
-        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(1, linepos1);
+        for (int i = 0; i < waypoints.childCount - waypointnum; i++)
+        {
+            linepos = new Vector3(waypoints.GetChild(i).position.x, waypoints.GetChild(i).position.y, waypoints.GetChild(i).position.z);
+            ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(i + 1, linepos);
+        }
+        linepos = new Vector3(ghostAvatars[index].transform.position.x, transform.position.y, ghostAvatars[index].transform.position.z);
+        ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(waypoints.childCount - waypointnum + 1, linepos);
         ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().enabled = true;
         ghostAvatars[index].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
         ghostAvatars[index].GetComponent<MeshRenderer>().material = mat;
@@ -205,36 +223,43 @@ public class JumpingVisual : MonoBehaviour
     private void UpdateIndex()
     {
         float distance = Vector3.Distance(gameObject.transform.position, currentNode.transform.position);
-        Debug.Log(currentIndex);
         if (distance < 1.5f)
         {
             currentIndex = currentNode.GetComponent<Node>().thisnode.nextnode;
             GetComponent<Logging>().AddData("NODE " + currentIndex.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
             chosenNode = 0;
             chosen = false;
+            waypointnum = 0;
             ResetPreview(selectedMat);
         }
         if (currentIndex >= ordered.Count)
         {
-            label.SetActive(true);
-            label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TASK"; 
-            GetComponent<Logging>().AddData("END OF TASK");
-            GetComponent<Logging>().AddData("Time Taken: " + timer.ToString());
-            pause = true;
+            pause = true;           
         } 
-        if (ordered[currentIndex].Count > 1 && !choice && !chosen)
+        else if (ordered[currentIndex].Count > 1 && !choice && !chosen)
         {
             GetComponent<Logging>().AddData("CHOICE: " + timer.ToString() + ", " + transform.position + ", " + transform.eulerAngles);
             choice = true; 
+        }
+        if (waypointnum < currentWaypoints.childCount)
+        {
+            float distance2 = Vector3.Distance(gameObject.transform.position, currentWaypoints.GetChild(waypointnum).position);
+            if (distance2 < 1.5f)
+            {
+                waypointnum += 1;
+            }
         }
     }
 
     IEnumerator Choose()
     {
+        Transform waypoints;
         Dictionary<int, float> distances = new Dictionary<int, float>();
+        waypointnum = 0;
         foreach (KeyValuePair<int, GameObject> node in ordered[currentIndex])
         {
-            SetPreview(node.Key, node.Value.transform, choiceMat);
+            waypoints = node.Value.GetComponent<Node>().thisnode.waypoints.transform;
+            SetPreview(node.Key, node.Value.transform, choiceMat, waypoints);
             arrows[node.Key].SetActive(true);
             arrows[node.Key].transform.localPosition = new Vector3(-0.3f * node.Key, -0.1f, 0);
             arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
@@ -243,7 +268,7 @@ public class JumpingVisual : MonoBehaviour
             arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
             Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
             arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, curRot.y, curRot.z);
-            distances.Add(node.Key, Vector3.Distance(gameObject.transform.position, node.Value.transform.position));
+            distances.Add(node.Key, Vector3.Distance(gameObject.transform.position, waypoints.GetChild(0).transform.position));
         }
         float min = Mathf.Infinity;
         int minindex = -1;
@@ -255,7 +280,7 @@ public class JumpingVisual : MonoBehaviour
                 minindex = dist.Key;
             }
         }
-        if (min < 3.0f)
+        if (min < 1.5f)
         {
             chosenNode = minindex;
             chosen = true;
@@ -269,7 +294,6 @@ public class JumpingVisual : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             arrows[chosenNode].SetActive(false);
             ResetPreview(selectedMat);
-            currentNode = ordered[currentIndex][chosenNode];
             choice = false;
         }
         else

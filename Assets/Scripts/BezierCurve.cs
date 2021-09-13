@@ -31,7 +31,7 @@ public class BezierCurve : MonoBehaviour
         controlPoints = new Vector3[3];
         curvedLine = GetComponent<LineRenderer>();
         curvedLine.enabled = false;
-        extendStep = 18f;
+        extendStep = 9f;
         controllerObject = GameObject.Find("RightControllerAnchor");
         maxjump = 3.5f;
     }

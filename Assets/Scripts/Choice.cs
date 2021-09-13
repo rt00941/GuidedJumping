@@ -41,7 +41,7 @@ public class Choice : MonoBehaviour
         {
             timeinroom = Time.time - timeinroom;
             GetComponent<Logging>().Write();
-            if (SceneManager.GetActiveScene().buildIndex == 2)
+            if (SceneManager.GetActiveScene().buildIndex + 1 >= SceneManager.sceneCountInBuildSettings)
             {
                 label.GetComponentInChildren<TMPro.TextMeshPro>().text = "End of Study";
             }
