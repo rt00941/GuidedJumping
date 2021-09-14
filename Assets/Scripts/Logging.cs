@@ -15,7 +15,8 @@ public class Logging : MonoBehaviour
     void Start()
     {
         string filename = "Participant " + participantNumber + " " + SceneManager.GetActiveScene().name;
-        path = "D:/Documents/Masters/Thesis/GuidedJumping/Data/" + filename + ".txt";
+        //path = "D:/Documents/Masters/Thesis/GuidedJumping/Data/" + filename + ".txt";
+        path = "C:/Users/Ramsha/Documents/GitHub/GuidedJumping/Data/" + filename + ".txt";
         datatext = filename + '\n';
     }
 
