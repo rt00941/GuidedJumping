@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319851179727448539}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 319851179893019532}
@@ -322,6 +322,9 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  layer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &3062479467026334631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,6 +351,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bezier: {fileID: 0}
   teleportAction: 2105344
+  choice: 0
+  pause: 0
+  chosen: 0
 --- !u!114 &2280041551728595486
 MonoBehaviour:
   m_ObjectHideFlags: 0

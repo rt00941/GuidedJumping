@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endPointDetected: 0
+  layer:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!120 &8651532807841007916
 LineRenderer:
   m_ObjectHideFlags: 0

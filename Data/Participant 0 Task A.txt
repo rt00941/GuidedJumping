@@ -1,0 +1,8 @@
+Participant 0 Task A
+
+Participant 0 Task A
+Free Jumping
+NODE 1: 0.0191227, (4.3511, 0.8000, -2.1717), (0.0000, 0.0000, 0.0000)
+
+Participant 0 Task A
+

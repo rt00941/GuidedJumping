@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 2353420500377664568}
   - component: {fileID: 1659256421623985053}
   - component: {fileID: 3522425847438772055}
-  - component: {fileID: 7873620601134398187}
+  - component: {fileID: 1212494821189740428}
   m_Layer: 6
   m_Name: GhostAvatar
   m_TagString: GhostAvatar
@@ -342,8 +342,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7873620601134398187
-BoxCollider:
+--- !u!64 &1212494821189740428
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -352,6 +352,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.0052765254, y: 0.013698025, z: 0.0040827547}
-  m_Center: {x: 0.000000002980232, y: 0.0065747523, z: 0.00014620788}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5495902117074765545, guid: 7428274273edf934fb5db3f82d5f39fc, type: 3}

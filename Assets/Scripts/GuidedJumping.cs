@@ -44,6 +44,7 @@ public class GuidedJumping : MonoBehaviour
     private Gesture previousGesture;
     string handtype;
     private GameObject hand;
+    public LayerMask layer;
 
     // Start is called before the first frame update
     void Start()
@@ -99,18 +100,15 @@ public class GuidedJumping : MonoBehaviour
             }
         }
         Countdown(countdowntime);
-        for (int i = 0; i < ordered.Count; i++)
+        for (int i = 0; i < arrows.Length; i++)
         {
-            foreach (KeyValuePair<int, GameObject> node in ordered[i])
+            if (arrows[i].activeSelf)
             {
-                if (arrows[node.Key].activeSelf)
-                {
-                    arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
-                    arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z); 
-                    arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
-                    Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
-                    arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0,curRot.y,curRot.z);
-                }
+                arrows[i].transform.LookAt(ghostAvatars[i].transform);
+                arrows[i].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, arrows[i].transform.localEulerAngles.y, 0);
+                arrows[i].transform.GetChild(1).transform.LookAt(gameObject.transform);
+                Vector3 curRot = arrows[i].transform.GetChild(1).transform.localEulerAngles;
+                arrows[i].transform.GetChild(1).transform.localEulerAngles = new Vector3(0,curRot.y,0);
             }
         }
         if (fingerBones.Count == 0)
@@ -148,10 +146,10 @@ public class GuidedJumping : MonoBehaviour
         label.GetComponentInChildren<TMPro.TextMeshPro>().text = "Paused";
         while (nodenum < ordered.Count)
         {
-            GetComponent<Logging>().AddData("NODE " + nodenum.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            GetComponent<Logging>().AddData("NODE " + nodenum.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
             if (ordered[nodenum].Count > 1)
             {
-                GetComponent<Logging>().AddData("CHOICE: " + timer.ToString() +", "+ transform.position + ", " + transform.eulerAngles);
+                GetComponent<Logging>().AddData("CHOICE: " + timer.ToString() +", "+ transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
                 choice = true;
                 Stop();
                 foreach (KeyValuePair<int,GameObject> node in ordered[nodenum])
@@ -161,11 +159,11 @@ public class GuidedJumping : MonoBehaviour
                     arrows[node.Key].SetActive(true);
                     arrows[node.Key].transform.localPosition = new Vector3(-0.3f * node.Key, -0.1f, 0);
                     arrows[node.Key].transform.LookAt(ghostAvatars[node.Key].transform);
-                    arrows[node.Key].transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, arrows[node.Key].transform.localEulerAngles.z);
+                    arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, arrows[node.Key].transform.localEulerAngles.y, 0);
                     arrows[node.Key].GetComponentInChildren<TMPro.TextMeshPro>().text = node.Value.GetComponent<Node>().thisnode.description;
                     arrows[node.Key].transform.GetChild(1).transform.LookAt(gameObject.transform);
                     Vector3 curRot = arrows[node.Key].transform.GetChild(1).transform.localEulerAngles;
-                    arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, curRot.y, curRot.z);
+                    arrows[node.Key].transform.GetChild(1).transform.localEulerAngles = new Vector3(0, curRot.y, 0);
                 }
                 yield return new WaitUntil(() => !choice);
                 foreach (GameObject a in arrows)
@@ -174,7 +172,7 @@ public class GuidedJumping : MonoBehaviour
                 }
                 arrows[chosenNode].SetActive(true);
                 arrows[chosenNode].GetComponentInChildren<TMPro.TextMeshPro>().text = "Selected!"; 
-                GetComponent<Logging>().AddData("SELECTED " + chosenNode.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+                GetComponent<Logging>().AddData("SELECTED " + chosenNode.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
                 yield return new WaitForSeconds(0.5f);
                 arrows[chosenNode].SetActive(false);
                 Restart();
@@ -187,7 +185,6 @@ public class GuidedJumping : MonoBehaviour
             {
                 SetPreview(chosenNode, currentWaypoints.GetChild(j),selectedMat);
                 countdowntime = 0;
-                //yield return new WaitUntil(() => !paused);
                 countdown = true;
                 countdowntime = 0;
                 yield return new WaitUntil(() => countdowntime >= waitTime);
@@ -199,11 +196,10 @@ public class GuidedJumping : MonoBehaviour
                 ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
                 gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
                 gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation;
-                GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+                GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
             }
             SetPreview(chosenNode, currentNode.transform,selectedMat);
             countdowntime = 0;
-            //yield return new WaitUntil(() => !paused);
             countdown = true;
             countdowntime = 0;
             yield return new WaitUntil(() => countdowntime >= waitTime);
@@ -215,7 +211,7 @@ public class GuidedJumping : MonoBehaviour
             ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
             gameObject.transform.position = currentNode.transform.position;
             gameObject.transform.rotation = currentNode.transform.rotation;
-            GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
             chosenNode = 0;
             nodenum = currentNode.GetComponent<Node>().thisnode.nextnode;
         }
@@ -252,7 +248,7 @@ public class GuidedJumping : MonoBehaviour
         ghostAvatars[index].transform.localEulerAngles = new Vector3(0, 0, 0);
         ghostAvatars[index].GetComponent<MeshRenderer>().enabled = true;
         Vector3 linepos = new Vector3(ghostAvatars[index].transform.position.x, transform.position.y, ghostAvatars[index].transform.position.z);
-        Vector3 linepos1 = new Vector3(transform.position.x, 0.0f, transform.position.z);
+        Vector3 linepos1 = new Vector3(transform.position.x, 0.5f, transform.position.z);
         ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(0, linepos);
         ghostAvatars[index].transform.GetChild(0).GetComponent<LineRenderer>().SetPosition(1, linepos1); 
         ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().startWidth = 0.1f;
@@ -283,42 +279,55 @@ public class GuidedJumping : MonoBehaviour
     {
         if (choice)
         {
+            hand = GameObject.Find(handtype);
             int index = -1;
             float minangle = Mathf.Infinity;
-            float anglelimit = 10;
-            hand = GameObject.Find(handtype);
             if (fingerBones != null)
             {
-                    foreach (var bone in fingerBones)
+                foreach (var bone in fingerBones)
+                {
+                    if (bone.Id == OVRSkeleton.BoneId.Hand_IndexTip)
                     {
-                        if (bone.Id == OVRSkeleton.BoneId.Hand_Index3)
+                        for (int i = 0; i < ghostAvatars.Length; i++)
                         {
-                            RaycastHit hit;
-                            int layer = LayerMask.GetMask("avatar");
-                            if (Physics.Raycast(bone.Transform.position, Vector3.forward, out hit, Mathf.Infinity, layer))
+                            float distance = Vector3.Distance(bone.Transform.position, ghostAvatars[i].transform.position);
+                            index = i;
+                            //float angle = Vector3.Angle(bone.Transform.position, ghostAvatars[i].transform.position);
+                            Debug.Log(bone.Transform.forward);
+                            float angle = Vector3.Angle(bone.Transform.forward, (bone.Transform.position - ghostAvatars[i].transform.position).normalized);
+                            Debug.Log(angle + " " + i);
+                        }
+                        /*RaycastHit hit;
+                        Debug.Log(bone.Transform.position);
+                        Physics.SphereCast(bone.Transform.position, 10.0F, transform.TransformDirection(Vector3.forward), out hit, 10.0f, layer.value);
+                        Debug.Log(hit.collider);
+                        if (Physics.Raycast(bone.Transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layer.value))
+                        {
+                            Debug.Log(hit.collider);
+                            for (int i = 0; i < ghostAvatars.Length; i++)
                             {
-                                for (int i = 0; i < ghostAvatars.Length; i++)
+                                if (hit.collider.gameObject.Equals(ghostAvatars[i]))
                                 {
-                                    if (hit.collider.gameObject.Equals(ghostAvatars[i]))
-                                    {
-                                        chosenNode = i;
-                                        choice = false;
-                                        break;
-                                    }
+                                    chosenNode = i;
+                                    choice = false;
+                                    break;
                                 }
                             }
-                        }
+                        }*/
                     }
+                }
             }
-            if (index >= 0 && minangle < anglelimit && minangle != 0)
+            /*if (index >= 0)// && minangle < anglelimit && minangle != 0)
             {
-            }
+                chosenNode = index;
+                choice = false;
+            }*/
         }
     }
     public void Stop()
     {
         paused = true;
-        GetComponent<Logging>().AddData("STOPPED: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+        GetComponent<Logging>().AddData("STOPPED: " + timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
     }
 
     public void Restart()
@@ -327,7 +336,7 @@ public class GuidedJumping : MonoBehaviour
         {
             paused = false;
             reset = true;
-            GetComponent<Logging>().AddData("RESTART: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            GetComponent<Logging>().AddData("RESTART: " + timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
         }
     }
 
@@ -438,7 +447,7 @@ public class GuidedJumping : MonoBehaviour
             if (choice)
             {
                 gestureactive = i; 
-                GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+                GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
             }
         }
         else
@@ -446,7 +455,7 @@ public class GuidedJumping : MonoBehaviour
             if (!choice)
             {
                 gestureactive = i; 
-                GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+                GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString("F4") + ", " + transform.eulerAngles.ToString("F4"));
             }
         }
     }
