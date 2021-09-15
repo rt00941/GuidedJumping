@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1129906344952092283}
   - component: {fileID: 537148806455209595}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Line (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   m_Component:
   - component: {fileID: 485993882805798099}
   - component: {fileID: 7770519303285009011}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,8 @@ GameObject:
   - component: {fileID: 2353420500377664568}
   - component: {fileID: 1659256421623985053}
   - component: {fileID: 3522425847438772055}
-  m_Layer: 0
+  - component: {fileID: 7873620601134398187}
+  m_Layer: 6
   m_Name: GhostAvatar
   m_TagString: GhostAvatar
   m_Icon: {fileID: 0}
@@ -283,7 +284,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3162327200318989954}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_Children:
@@ -307,7 +308,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3162327200318989954}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -341,3 +342,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7873620601134398187
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3162327200318989954}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.0052765254, y: 0.013698025, z: 0.0040827547}
+  m_Center: {x: 0.000000002980232, y: 0.0065747523, z: 0.00014620788}

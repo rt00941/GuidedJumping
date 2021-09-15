@@ -93,7 +93,7 @@ public class GuidedJumping : MonoBehaviour
         if (countdown)
         {
             countdowntime += Time.deltaTime;
-            if (countdowntime >= waitTime)
+            if (paused)
             {
                 countdowntime = 0;
             }
@@ -186,52 +186,30 @@ public class GuidedJumping : MonoBehaviour
             for (int j = 0; j < currentWaypoints.childCount; j++)
             {
                 SetPreview(chosenNode, currentWaypoints.GetChild(j),selectedMat);
-                while (!paused)
-                {
-                    countdown = true;
-                    yield return new WaitForSeconds(waitTime);
-                    countdown = false;
-                    yield return new WaitUntil(() => !paused);
-                    if (!paused)
-                    {
-                        if (reset)
-                        {
-                            countdown = true;
-                            yield return new WaitForSeconds(waitTime);
-                            countdown = false;
-                            reset = false;
-                        }
-                        Stop();
-                    }
-                }
-                paused = false;
+                countdowntime = 0;
+                //yield return new WaitUntil(() => !paused);
+                countdown = true;
+                countdowntime = 0;
+                yield return new WaitUntil(() => countdowntime >= waitTime);
+                countdown = false;
+                countdowntime = 0;
+                reset = false;
                 ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
                 ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
                 ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
                 gameObject.transform.position = currentWaypoints.GetChild(j).transform.position;
-                gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation; 
+                gameObject.transform.rotation = currentWaypoints.GetChild(j).transform.rotation;
                 GetComponent<Logging>().AddData(timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
             }
             SetPreview(chosenNode, currentNode.transform,selectedMat);
-            while (!paused)
-            {
-                countdown = true;
-                yield return new WaitForSeconds(waitTime);
-                countdown = false;
-                yield return new WaitUntil(() => !paused);
-                if (!paused)
-                {
-                    if (reset)
-                    {
-                        countdown = true;
-                        yield return new WaitForSeconds(waitTime);
-                        countdown = false;
-                        reset = false;
-                    }
-                    Stop();
-                }
-            }
-            paused = false;
+            countdowntime = 0;
+            //yield return new WaitUntil(() => !paused);
+            countdown = true;
+            countdowntime = 0;
+            yield return new WaitUntil(() => countdowntime >= waitTime);
+            countdown = false;
+            countdowntime = 0;
+            reset = false;
             ghostAvatars[chosenNode].GetComponent<MeshRenderer>().enabled = false;
             ghostAvatars[chosenNode].transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
             ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
@@ -293,8 +271,8 @@ public class GuidedJumping : MonoBehaviour
     {
         foreach (GameObject avatar in ghostAvatars)
         {
-            avatar.transform.GetComponent<MeshRenderer>().material = selectedMat;
-            avatar.GetComponentInChildren<LineRenderer>().material = selectedMat;
+            avatar.transform.GetComponent<MeshRenderer>().material = mat;
+            avatar.GetComponentInChildren<LineRenderer>().material = mat;
             avatar.GetComponent<MeshRenderer>().enabled = false;
             avatar.transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
             avatar.transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
@@ -305,26 +283,35 @@ public class GuidedJumping : MonoBehaviour
     {
         if (choice)
         {
-            Debug.Log("CHOOSE");
             int index = -1;
             float minangle = Mathf.Infinity;
+            float anglelimit = 10;
             hand = GameObject.Find(handtype);
-            for (int i = 0; i < ghostAvatars.Length; i++)
+            if (fingerBones != null)
             {
-                if (eyes != null)
-                {
-                    float temp = Vector3.Angle(ghostAvatars[i].transform.forward, eyes.transform.position - ghostAvatars[i].transform.position);
-                    if (minangle > temp)
+                    foreach (var bone in fingerBones)
                     {
-                        minangle = temp;
-                        index = i;
+                        if (bone.Id == OVRSkeleton.BoneId.Hand_Index3)
+                        {
+                            RaycastHit hit;
+                            int layer = LayerMask.GetMask("avatar");
+                            if (Physics.Raycast(bone.Transform.position, Vector3.forward, out hit, Mathf.Infinity, layer))
+                            {
+                                for (int i = 0; i < ghostAvatars.Length; i++)
+                                {
+                                    if (hit.collider.gameObject.Equals(ghostAvatars[i]))
+                                    {
+                                        chosenNode = i;
+                                        choice = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
             }
-            if (index >= 0)
+            if (index >= 0 && minangle < anglelimit && minangle != 0)
             {
-                chosenNode = index;
-                choice = false;
             }
         }
     }
@@ -336,9 +323,12 @@ public class GuidedJumping : MonoBehaviour
 
     public void Restart()
     {
-        paused = false;
-        reset = true; 
-        GetComponent<Logging>().AddData("RESTART: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+        if (!choice)
+        {
+            paused = false;
+            reset = true;
+            GetComponent<Logging>().AddData("RESTART: " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+        }
     }
 
     public void Countdown(float t)
@@ -356,6 +346,18 @@ public class GuidedJumping : MonoBehaviour
         ghostAvatars[chosenNode].transform.GetChild(1).GetComponent<LineRenderer>().endWidth = width;
     }
 
+    bool IsVisible(GameObject toCheck)
+    {
+        if (eyes != null)
+        {
+            Vector3 point = eyes.transform.GetComponent<Camera>().WorldToViewportPoint(toCheck.transform.position);
+            if (point.x > 0 && point.x < 1 && point.y >0 && point.y < 1 && point.z > 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     void CheckFocus()
     {
         float angle = 60;
@@ -363,12 +365,12 @@ public class GuidedJumping : MonoBehaviour
         {
             if (Vector3.Distance(eyes.transform.position, ghostAvatars[chosenNode].transform.position) > 2)
             {
-                if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
+                if (!(Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle) && !IsVisible(ghostAvatars[chosenNode]))
                 {
                     focused = false;
                     Stop();
                 }
-                else if ((Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle))
+                else if ((Vector3.Angle(eyes.transform.forward, ghostAvatars[chosenNode].transform.position - eyes.transform.position) < angle) && IsVisible(ghostAvatars[chosenNode]) && !focused)
                 {
                     focused = true;
                     if (!choice && paused)
@@ -384,16 +386,12 @@ public class GuidedJumping : MonoBehaviour
     public bool GestureInView(string handside)
     {
         hand = GameObject.Find(handside);
-        float angle = 80;
-        Debug.Log(hand);
-        Debug.Log(eyes);
         if (hand != null && eyes != null)
         {
-            if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.05f)
+            if (IsVisible(hand) && hand.GetComponentInChildren<SkinnedMeshRenderer>().enabled)
             {
-                if (!(Vector3.Angle(eyes.transform.forward, hand.transform.position - eyes.transform.position) < angle))
+                if (Vector3.Distance(eyes.transform.position, hand.transform.position) > 0.05f)
                 {
-                    Debug.Log("IN VIEW");
                     return true;
                 }
             }
@@ -435,7 +433,21 @@ public class GuidedJumping : MonoBehaviour
 
     public void SetGestureActive(int i)
     {
-        gestureactive = i; 
-        GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+        if (i == 2)
+        {
+            if (choice)
+            {
+                gestureactive = i; 
+                GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            }
+        }
+        else
+        { 
+            if (!choice)
+            {
+                gestureactive = i; 
+                GetComponent<Logging>().AddData("GESTURE " + i.ToString() + ": " + timer.ToString() + ", " + transform.position.ToString() + ", " + transform.eulerAngles.ToString());
+            }
+        }
     }
 }

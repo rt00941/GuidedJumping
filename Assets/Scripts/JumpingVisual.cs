@@ -212,8 +212,8 @@ public class JumpingVisual : MonoBehaviour
     {
         foreach (GameObject avatar in ghostAvatars)
         {
-            avatar.transform.GetComponent<MeshRenderer>().material = selectedMat;
-            avatar.GetComponentInChildren<LineRenderer>().material = selectedMat;
+            avatar.transform.GetComponent<MeshRenderer>().material = mat;
+            avatar.GetComponentInChildren<LineRenderer>().material = mat;
             avatar.GetComponent<MeshRenderer>().enabled = false;
             avatar.transform.GetChild(0).GetComponent<LineRenderer>().enabled = false;
             avatar.transform.GetChild(1).GetComponent<LineRenderer>().enabled = false;
