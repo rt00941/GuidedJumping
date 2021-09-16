@@ -128,6 +128,7 @@ public class JumpingVisual : MonoBehaviour
             label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TASK";
             GetComponent<Logging>().AddData("END OF TASK");
             GetComponent<Logging>().AddData("Time Taken: " + timer.ToString());
+            GetComponent<JumpingVisual>().enabled = false;
         }
     }
 

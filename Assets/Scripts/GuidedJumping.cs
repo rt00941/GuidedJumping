@@ -34,10 +34,10 @@ public class GuidedJumping : MonoBehaviour
     private Material selectedMat;
     private Material choiceMat;
     private float timer;
-    public int gestureactive; // none = -1, stop = 0, restart = 1, pointing = 2
+    private int gestureactive; // none = -1, stop = 0, restart = 1, pointing = 2
 
 
-    public float threshold = 0.1f;
+    private float threshold = 0.1f;
     public OVRSkeleton skeleton;
     public List<Gesture> gestures;
     private List<OVRBone> fingerBones;
@@ -222,6 +222,7 @@ public class GuidedJumping : MonoBehaviour
         label.GetComponentInChildren<TMPro.TextMeshPro>().text = "END OF TASK";
         GetComponent<Logging>().AddData("END OF TASK");
         GetComponent<Logging>().AddData("Time Taken: " + timer.ToString());
+        GetComponent<GuidedJumping>().enabled = false;
     }
 
     private void orderNodes()
@@ -290,38 +291,22 @@ public class GuidedJumping : MonoBehaviour
                     {
                         for (int i = 0; i < ghostAvatars.Length; i++)
                         {
-                            float distance = Vector3.Distance(bone.Transform.position, ghostAvatars[i].transform.position);
-                            index = i;
-                            //float angle = Vector3.Angle(bone.Transform.position, ghostAvatars[i].transform.position);
-                            Debug.Log(bone.Transform.forward);
-                            float angle = Vector3.Angle(bone.Transform.forward, (bone.Transform.position - ghostAvatars[i].transform.position).normalized);
-                            Debug.Log(angle + " " + i);
-                        }
-                        /*RaycastHit hit;
-                        Debug.Log(bone.Transform.position);
-                        Physics.SphereCast(bone.Transform.position, 10.0F, transform.TransformDirection(Vector3.forward), out hit, 10.0f, layer.value);
-                        Debug.Log(hit.collider);
-                        if (Physics.Raycast(bone.Transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layer.value))
-                        {
-                            Debug.Log(hit.collider);
-                            for (int i = 0; i < ghostAvatars.Length; i++)
+                            float angle = Vector3.Angle(bone.Transform.right * -1, (bone.Transform.position - ghostAvatars[i].transform.position).normalized);
+                            Debug.Log(angle + " : " + i);
+                            if (angle < minangle)
                             {
-                                if (hit.collider.gameObject.Equals(ghostAvatars[i]))
-                                {
-                                    chosenNode = i;
-                                    choice = false;
-                                    break;
-                                }
+                                index = i;
+                                minangle = angle;
                             }
-                        }*/
+                        }
                     }
                 }
             }
-            /*if (index >= 0)// && minangle < anglelimit && minangle != 0)
+            if (index >= 0 && minangle < 40)
             {
                 chosenNode = index;
                 choice = false;
-            }*/
+            }
         }
     }
     public void Stop()
